@@ -9,6 +9,32 @@
 @endphp
 
 @section('content')
+    <!-- Breadcrumb -->
+    <nav class="flex mb-6" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li class="inline-flex items-center">
+                <a href="{{ route('dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600" style="color: var(--text-secondary);">
+                    <i class="fas fa-home mr-2"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <i class="fas fa-chevron-right text-gray-400 mx-1"></i>
+                    <a href="{{ route('notifications.index') }}" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2" style="color: var(--text-secondary);">
+                        Notifications
+                    </a>
+                </div>
+            </li>
+            <li aria-current="page">
+                <div class="flex items-center">
+                    <i class="fas fa-chevron-right text-gray-400 mx-1"></i>
+                    <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2" style="color: var(--text-primary);">Settings</span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
         <x-stats-card
@@ -90,7 +116,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const rows = tableBody.querySelectorAll('tr');
         rows.forEach(row => {
             const enabledCell = row.querySelector('td:nth-child(5)'); // Enabled column
-            if (enabledCell) {
+            const idCell = row.querySelector('td:first-child'); // ID column
+            if (enabledCell && idCell) {
+                const settingId = idCell.textContent.trim();
                 const enabled = enabledCell.textContent.trim() === 'Enabled';
                 const toggleButton = document.createElement('button');
                 toggleButton.className = `inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
@@ -98,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }`;
                 toggleButton.textContent = enabled ? 'Enabled' : 'Disabled';
                 toggleButton.onclick = function() {
-                    toggleSetting(this, row.dataset.id);
+                    toggleSetting(this, settingId);
                 };
                 enabledCell.innerHTML = '';
                 enabledCell.appendChild(toggleButton);
@@ -108,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function toggleSetting(button, settingId) {
-    fetch(`/notifications/settings/${settingId}/toggle`, {
+    fetch(`{{ url('/notifications/settings') }}/${settingId}/toggle`, {
         method: 'POST',
         headers: {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -138,7 +166,7 @@ function toggleSetting(button, settingId) {
 
 function testAllNotifications() {
     if (confirm('This will send test notifications for all enabled settings. Continue?')) {
-        fetch('/notifications/test-all', {
+        fetch('{{ route("notifications.test-all") }}', {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),

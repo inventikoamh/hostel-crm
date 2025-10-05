@@ -4,8 +4,13 @@
 
 @section('content')
 <div class="container-fluid px-4">
+    <div class="bg-white rounded-xl shadow-sm border p-6 mb-6" style="background-color: var(--card-bg); border-color: var(--border-color);">
+        <h1 class="text-2xl font-bold mb-2" style="color: var(--text-primary);">Notifications</h1>
+        <p class="text-sm" style="color: var(--text-secondary);">Manage email notifications and delivery status</p>
+    </div>
     <!-- Action Buttons -->
-    <div class="flex flex-col sm:flex-row gap-3 mb-6">
+    <div class="bg-white rounded-xl shadow-sm border p-6 mb-6" style="background-color: var(--card-bg); border-color: var(--border-color);">
+        <div class="flex flex-col sm:flex-row gap-3">
         <a href="{{ route('notifications.settings.index') }}"
            class="inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
             <i class="fas fa-cog mr-2"></i>
@@ -26,10 +31,12 @@
             <i class="fas fa-chart-bar mr-2"></i>
             Statistics
         </button>
+        </div>
     </div>
 
     <!-- Data Table -->
-    <x-data-table
+    <div class="bg-white rounded-xl shadow-sm border" style="background-color: var(--card-bg); border-color: var(--border-color);">
+        <x-data-table
         :data="$data"
         :columns="$columns"
         :filters="$filters"
@@ -42,7 +49,8 @@
         title=""
         addButtonText=""
         addButtonUrl=""
-    />
+        />
+    </div>
 </div>
 
 <!-- Statistics Modal -->

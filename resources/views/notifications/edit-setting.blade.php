@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Create Notification Setting')
+@section('title', 'Edit Notification Setting')
 
 @section('content')
 <div class="container-fluid px-4">
@@ -32,7 +32,7 @@
             <li aria-current="page">
                 <div class="flex items-center">
                     <i class="fas fa-chevron-right text-gray-400 mx-1"></i>
-                    <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2" style="color: var(--text-primary);">Create</span>
+                    <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2" style="color: var(--text-primary);">Edit</span>
                 </div>
             </li>
         </ol>
@@ -64,8 +64,9 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('notifications.settings.store') }}">
+        <form method="POST" action="{{ route('notifications.settings.update', $notificationSetting) }}">
             @csrf
+            @method('PUT')
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Notification Type -->
@@ -80,7 +81,7 @@
                             required>
                         <option value="">Select notification type...</option>
                         @foreach($notificationTypes as $type)
-                            <option value="{{ $type['value'] }}" {{ old('notification_type') == $type['value'] ? 'selected' : '' }}>
+                            <option value="{{ $type['value'] }}" {{ old('notification_type', $notificationSetting->notification_type) == $type['value'] ? 'selected' : '' }}>
                                 {{ $type['label'] }}
                             </option>
                         @endforeach
@@ -99,7 +100,7 @@
                            id="name"
                            name="name"
                            class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('name') border-red-500 @enderror"
-                           value="{{ old('name') }}"
+                           value="{{ old('name', $notificationSetting->name) }}"
                            style="background-color: var(--input-bg); border-color: var(--border-color); color: var(--text-primary);"
                            required>
                     @error('name')
@@ -115,7 +116,7 @@
                           name="description"
                           class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('description') border-red-500 @enderror"
                           rows="3"
-                          style="background-color: var(--input-bg); border-color: var(--border-color); color: var(--text-primary);">{{ old('description') }}</textarea>
+                          style="background-color: var(--input-bg); border-color: var(--border-color); color: var(--text-primary);">{{ old('description', $notificationSetting->description) }}</textarea>
                 @error('description')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                 @enderror
@@ -135,7 +136,7 @@
                             onchange="toggleRecipientEmail()">
                         <option value="">Select recipient type...</option>
                         @foreach($recipientTypes as $type)
-                            <option value="{{ $type['value'] }}" {{ old('recipient_type') == $type['value'] ? 'selected' : '' }}>
+                            <option value="{{ $type['value'] }}" {{ old('recipient_type', $notificationSetting->recipient_type) == $type['value'] ? 'selected' : '' }}>
                                 {{ $type['label'] }}
                             </option>
                         @endforeach
@@ -154,7 +155,7 @@
                            id="recipient_email"
                            name="recipient_email"
                            class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('recipient_email') border-red-500 @enderror"
-                           value="{{ old('recipient_email') }}"
+                           value="{{ old('recipient_email', $notificationSetting->recipient_email) }}"
                            style="background-color: var(--input-bg); border-color: var(--border-color); color: var(--text-primary);">
                     @error('recipient_email')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -171,8 +172,8 @@
                             class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('priority') border-red-500 @enderror"
                             style="background-color: var(--input-bg); border-color: var(--border-color); color: var(--text-primary);"
                             required>
-                        @foreach($priorities as $key => $label)
-                            <option value="{{ $key }}" {{ old('priority', 2) == $key ? 'selected' : '' }}>
+                        @foreach($priorities as $value => $label)
+                            <option value="{{ $value }}" {{ old('priority', $notificationSetting->priority) == $value ? 'selected' : '' }}>
                                 {{ $label }}
                             </option>
                         @endforeach
@@ -192,7 +193,7 @@
                                id="send_immediately"
                                name="send_immediately"
                                value="1"
-                               {{ old('send_immediately', true) ? 'checked' : '' }}
+                               {{ old('send_immediately', $notificationSetting->send_immediately) ? 'checked' : '' }}
                                class="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                                onchange="toggleDelayField()">
                         <span class="text-sm font-medium" style="color: var(--text-secondary);">Send Immediately</span>
@@ -206,7 +207,7 @@
                            id="delay_minutes"
                            name="delay_minutes"
                            class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('delay_minutes') border-red-500 @enderror"
-                           value="{{ old('delay_minutes', 0) }}"
+                           value="{{ old('delay_minutes', $notificationSetting->delay_minutes) }}"
                            min="0"
                            max="1440"
                            style="background-color: var(--input-bg); border-color: var(--border-color); color: var(--text-primary);">
@@ -224,7 +225,7 @@
                            id="enabled"
                            name="enabled"
                            value="1"
-                           {{ old('enabled', true) ? 'checked' : '' }}
+                           {{ old('enabled', $notificationSetting->enabled) ? 'checked' : '' }}
                            class="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                     <span class="text-sm font-medium" style="color: var(--text-secondary);">Enabled</span>
                 </label>
@@ -239,7 +240,7 @@
                 <button type="submit"
                         class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200">
                     <i class="fas fa-save mr-2"></i>
-                    Create Setting
+                    Update Setting
                 </button>
             </div>
         </form>

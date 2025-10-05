@@ -325,41 +325,23 @@ class NotificationController extends Controller
      */
     public function storeSetting(Request $request)
     {
-        // Debug: Log the request data
-        \Log::info('Notification Setting Store Request:', $request->all());
+        $request->validate([
+            'notification_type' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'enabled' => 'boolean',
+            'recipient_type' => 'required|string|in:admin,tenant,specific_email',
+            'recipient_email' => 'required_if:recipient_type,specific_email|email|max:255',
+            'priority' => 'required|integer|in:1,2,3',
+            'send_immediately' => 'boolean',
+            'delay_minutes' => 'integer|min:0|max:1440',
+        ]);
 
         try {
-            $request->validate([
-                'notification_type' => 'required|string|max:255',
-                'name' => 'required|string|max:255',
-                'description' => 'nullable|string',
-                'enabled' => 'boolean',
-                'recipient_type' => 'required|string|in:admin,tenant,specific_email',
-                'recipient_email' => 'required_if:recipient_type,specific_email|email|max:255',
-                'priority' => 'required|integer|in:1,2,3',
-                'send_immediately' => 'boolean',
-                'delay_minutes' => 'integer|min:0|max:1440',
-            ]);
-
-            \Log::info('Validation passed, creating notification setting...');
-
-            $setting = NotificationSetting::create($request->all());
-
-            \Log::info('Notification setting created successfully:', ['id' => $setting->id]);
-
+            NotificationSetting::create($request->all());
             return redirect()->route('notifications.settings.index')
                 ->with('success', 'Notification setting created successfully.');
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            \Log::error('Validation failed:', $e->errors());
-            return redirect()->back()
-                ->withErrors($e->errors())
-                ->withInput();
         } catch (\Exception $e) {
-            \Log::error('Error creating notification setting:', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
             return redirect()->back()
                 ->with('error', 'Failed to create notification setting: ' . $e->getMessage())
                 ->withInput();
