@@ -21,7 +21,6 @@ class DatabaseSeeder extends Seeder
             TenantSeeder::class,
             EnquirySeeder::class,
             PaidAmenitySeeder::class,
-            TenantAmenitySeeder::class,
             AmenityUsageSeeder::class,
         ]);
     }
