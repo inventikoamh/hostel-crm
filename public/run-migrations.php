@@ -36,12 +36,17 @@ function runCommand($command, $description) {
     ];
 }
 
+// Check if this is an AJAX request
+$isAjax = !empty($_POST) || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
+
 // Debug: Log all POST data
 error_log("POST data received: " . print_r($_POST, true));
+error_log("Is AJAX request: " . ($isAjax ? 'true' : 'false'));
 
 // Simple test endpoint
 if (isset($_POST['action']) && $_POST['action'] === 'test') {
     header('Content-Type: application/json');
+    header('Cache-Control: no-cache, must-revalidate');
     echo json_encode(['success' => true, 'message' => 'Test successful', 'post_data' => $_POST]);
     exit;
 }
@@ -49,6 +54,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'test') {
 // Handle AJAX requests
 if (isset($_POST['action']) && $_POST['action'] === 'run_migrations') {
     header('Content-Type: application/json');
+    header('Cache-Control: no-cache, must-revalidate');
 
     $steps = [];
     $overall_success = true;
@@ -429,6 +435,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'run_migrations') {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: 'action=test&test_data=hello'
             })
@@ -466,10 +473,28 @@ if (isset($_POST['action']) && $_POST['action'] === 'run_migrations') {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: `action=run_migrations&migration_type=${migrationType}&run_seeders=${runSeeders}`
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                return response.text().then(text => {
+                    console.log('Raw response:', text);
+                    try {
+                        return JSON.parse(text);
+                    } catch (e) {
+                        console.error('JSON parse error:', e);
+                        throw new Error('Invalid JSON response: ' + text.substring(0, 200));
+                    }
+                });
+            })
             .then(data => {
                 displayMigrationResults(data);
 
@@ -484,7 +509,10 @@ if (isset($_POST['action']) && $_POST['action'] === 'run_migrations') {
             })
             .catch(error => {
                 console.error('Error:', error);
-                stepsDiv.innerHTML = '<div class="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700">Migration failed due to an error</div>';
+                stepsDiv.innerHTML = `<div class="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                    <strong>Migration failed:</strong><br>
+                    ${error.message}
+                </div>`;
 
                 // Re-enable button
                 btn.disabled = false;
