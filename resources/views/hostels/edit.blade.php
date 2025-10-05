@@ -157,20 +157,20 @@
                     <h3 class="text-lg font-semibold mb-4" style="color: var(--text-primary);">Timing & Rules</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label for="check_in_time" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Check-in Time *</label>
-                            <input type="time" id="check_in_time" name="check_in_time" value="{{ $hostel->check_in_time }}" required
+                            <label for="check_in_time" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Check-in Time </label>
+                            <input type="time" id="check_in_time" name="check_in_time" value="{{ $hostel->check_in_time }}"
                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                    style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);">
                         </div>
                         <div>
-                            <label for="check_out_time" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Check-out Time *</label>
-                            <input type="time" id="check_out_time" name="check_out_time" value="{{ $hostel->check_out_time }}" required
+                            <label for="check_out_time" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Check-out Time </label>
+                            <input type="time" id="check_out_time" name="check_out_time" value="{{ $hostel->check_out_time }}"
                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                    style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);">
                         </div>
                         <div class="md:col-span-2">
-                            <label for="rules" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Rules & Regulations *</label>
-                            <textarea id="rules" name="rules" rows="4" required
+                            <label for="rules" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Rules & Regulations </label>
+                            <textarea id="rules" name="rules" rows="4"
                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                       style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);"
                                       placeholder="Enter hostel rules and regulations...">{{ $hostel->rules }}</textarea>

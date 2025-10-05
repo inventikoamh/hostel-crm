@@ -145,9 +145,9 @@ class HostelController extends Controller
             'manager_name' => 'required|string|max:255',
             'manager_phone' => 'required|string|max:20',
             'manager_email' => 'required|email|max:255',
-            'check_in_time' => 'required|date_format:H:i',
-            'check_out_time' => 'required|date_format:H:i',
-            'rules' => 'required|string|min:10',
+            'check_in_time' => 'nullable|date_format:H:i',
+            'check_out_time' => 'nullable|date_format:H:i',
+            'rules' => 'nullable|string',
         ]);
 
         Hostel::create($request->all());
@@ -198,9 +198,9 @@ class HostelController extends Controller
             'manager_name' => 'required|string|max:255',
             'manager_phone' => 'required|string|max:20',
             'manager_email' => 'required|email|max:255',
-            'check_in_time' => 'required|date_format:H:i',
-            'check_out_time' => 'required|date_format:H:i',
-            'rules' => 'required|string|min:10',
+            'check_in_time' => 'nullable|date_format:H:i',
+            'check_out_time' => 'nullable|date_format:H:i',
+            'rules' => 'nullable|string',
         ]);
 
         $hostel = Hostel::findOrFail($id);
