@@ -33,6 +33,231 @@ set_time_limit(300);
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+// Check if we're in the right directory
+if (!file_exists('../artisan')) {
+    die("❌ Error: artisan file not found. Please run this script from your Laravel project root directory.");
+}
+
+// Change to parent directory (Laravel root)
+chdir('..');
+
+// Function to run commands
+function runCommand($command, $description) {
+    $output = [];
+    $return_var = 0;
+    exec($command . ' 2>&1', $output, $return_var);
+
+    return [
+        'success' => $return_var === 0,
+        'output' => implode("\n", $output),
+        'return_code' => $return_var
+    ];
+}
+
+// Handle AJAX requests
+if (isset($_POST['action'])) {
+    header('Content-Type: application/json');
+    header('Cache-Control: no-cache, must-revalidate');
+
+    $action = $_POST['action'];
+    $result = null;
+
+    switch ($action) {
+        case 'deploy':
+            $steps = [];
+            $overall_success = true;
+
+            // Step 1: Install Composer dependencies
+            $result = runCommand('composer install --no-dev --optimize-autoloader', 'Installing production dependencies');
+            $steps[] = [
+                'name' => 'Install Dependencies',
+                'success' => $result['success'],
+                'output' => $result['output']
+            ];
+            if (!$result['success']) $overall_success = false;
+
+            // Step 2: Clear and cache
+            $cache_commands = [
+                'php artisan config:clear' => 'Clear Config Cache',
+                'php artisan config:cache' => 'Cache Configuration',
+                'php artisan route:clear' => 'Clear Route Cache',
+                'php artisan route:cache' => 'Cache Routes',
+                'php artisan view:clear' => 'Clear View Cache',
+                'php artisan view:cache' => 'Cache Views'
+            ];
+
+            $cache_success = true;
+            foreach ($cache_commands as $command => $description) {
+                $result = runCommand($command, $description);
+                if (!$result['success']) {
+                    $cache_success = false;
+                }
+            }
+
+            $steps[] = [
+                'name' => 'Cache Optimization',
+                'success' => $cache_success,
+                'output' => $cache_success ? 'All caches optimized successfully' : 'Some cache operations failed'
+            ];
+
+            // Step 3: Final optimization
+            $result = runCommand('php artisan optimize', 'Optimizing application');
+            $steps[] = [
+                'name' => 'Final Optimization',
+                'success' => $result['success'],
+                'output' => $result['output']
+            ];
+
+            $result = [
+                'success' => $overall_success,
+                'steps' => $steps
+            ];
+            break;
+
+        case 'clear_cache':
+            $steps = [];
+            $overall_success = true;
+
+            $cache_commands = [
+                'php artisan config:clear' => 'Clear Config Cache',
+                'php artisan route:clear' => 'Clear Route Cache',
+                'php artisan view:clear' => 'Clear View Cache',
+                'php artisan event:clear' => 'Clear Event Cache',
+                'php artisan cache:clear' => 'Clear Application Cache'
+            ];
+
+            foreach ($cache_commands as $command => $description) {
+                $result = runCommand($command, $description);
+                $steps[] = [
+                    'name' => $description,
+                    'success' => $result['success'],
+                    'output' => $result['output']
+                ];
+                if (!$result['success']) $overall_success = false;
+            }
+
+            $result = [
+                'success' => $overall_success,
+                'steps' => $steps
+            ];
+            break;
+
+        case 'run_migrations':
+            $steps = [];
+            $overall_success = true;
+            $migration_type = $_POST['migration_type'] ?? 'normal';
+            $run_seeders = isset($_POST['run_seeders']) && ($_POST['run_seeders'] === 'true' || $_POST['run_seeders'] === 'on');
+
+            // Step 1: Check database connection
+            $result = runCommand('php artisan migrate:status', 'Checking database connection and migration status');
+            $steps[] = [
+                'name' => 'Database Connection Check',
+                'success' => $result['success'],
+                'output' => $result['success'] ? 'Database connection successful' : 'Database connection failed: ' . $result['output']
+            ];
+            if (!$result['success']) $overall_success = false;
+
+            // Step 2: Run migrations based on type
+            if ($overall_success) {
+                $migration_command = 'php artisan migrate --force';
+
+                switch ($migration_type) {
+                    case 'fresh':
+                        $migration_command = 'php artisan migrate:fresh --force';
+                        break;
+                    case 'fresh_seed':
+                        $migration_command = 'php artisan migrate:fresh --seed --force';
+                        break;
+                    case 'rollback':
+                        $migration_command = 'php artisan migrate:rollback --force';
+                        break;
+                    case 'reset':
+                        $migration_command = 'php artisan migrate:reset --force';
+                        break;
+                }
+
+                $result = runCommand($migration_command, 'Running database migrations');
+                $steps[] = [
+                    'name' => 'Database Migrations',
+                    'success' => $result['success'],
+                    'output' => $result['output']
+                ];
+                if (!$result['success']) $overall_success = false;
+            }
+
+            // Step 3: Run seeders if requested and migrations were successful
+            if ($overall_success && $run_seeders && $migration_type !== 'fresh_seed') {
+                $result = runCommand('php artisan db:seed --force', 'Running database seeders');
+                $steps[] = [
+                    'name' => 'Database Seeders',
+                    'success' => $result['success'],
+                    'output' => $result['output']
+                ];
+                if (!$result['success']) $overall_success = false;
+            }
+
+            $result = [
+                'success' => $overall_success,
+                'steps' => $steps
+            ];
+            break;
+
+        case 'optimize':
+            $steps = [];
+            $overall_success = true;
+
+            $optimize_commands = [
+                'php artisan config:cache' => 'Cache Configuration',
+                'php artisan route:cache' => 'Cache Routes',
+                'php artisan view:cache' => 'Cache Views',
+                'php artisan event:cache' => 'Cache Events',
+                'php artisan optimize' => 'Optimize Application'
+            ];
+
+            foreach ($optimize_commands as $command => $description) {
+                $result = runCommand($command, $description);
+                $steps[] = [
+                    'name' => $description,
+                    'success' => $result['success'],
+                    'output' => $result['output']
+                ];
+                if (!$result['success']) $overall_success = false;
+            }
+
+            $result = [
+                'success' => $overall_success,
+                'steps' => $steps
+            ];
+            break;
+
+        case 'maintenance_on':
+            $result = runCommand('php artisan down', 'Enabling maintenance mode');
+            break;
+
+        case 'maintenance_off':
+            $result = runCommand('php artisan up', 'Disabling maintenance mode');
+            break;
+
+        case 'maintenance_status':
+            $downFile = 'storage/framework/down';
+            $isDown = file_exists($downFile);
+            $result = [
+                'success' => true,
+                'output' => $isDown ? 'Maintenance mode is ENABLED' : 'Maintenance mode is DISABLED',
+                'is_down' => $isDown
+            ];
+            break;
+
+        case 'backup':
+            $backup_name = $_POST['backup_name'] ?? 'backup_' . date('Y-m-d_H-i-s');
+            $result = runCommand("php artisan backup:run --filename=$backup_name", 'Creating database backup');
+            break;
+    }
+
+    echo json_encode($result);
+    exit;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -217,45 +442,45 @@ ini_set('display_errors', 1);
                 <div class="card">
                     <h3>🚀 Complete Deployment</h3>
                     <p>Run the full deployment process including dependencies, configuration, and database setup.</p>
-                    <button class="btn btn-success" onclick="runScript('deploy.php')">Deploy Application</button>
+                    <button class="btn btn-success" onclick="runAction('deploy')">Deploy Application</button>
                 </div>
 
                 <!-- Cache Management -->
                 <div class="card">
                     <h3>🧹 Cache Management</h3>
                     <p>Clear all Laravel caches including application, config, routes, views, and events.</p>
-                    <button class="btn btn-warning" onclick="runScript('clear-cache.php')">Clear All Caches</button>
+                    <button class="btn btn-warning" onclick="runAction('clear_cache')">Clear All Caches</button>
                 </div>
 
                 <!-- Database Migrations -->
                 <div class="card">
                     <h3>🗄️ Database Migrations</h3>
                     <p>Run database migrations with optional seeders. Choose your migration type.</p>
-                    <button class="btn btn-info" onclick="runScript('run-migrations.php')">Run Migrations</button>
-                    <button class="btn btn-info" onclick="runScript('run-migrations.php?seed=1')">Run with Seeders</button>
+                    <button class="btn btn-info" onclick="runMigration('normal', false)">Run Migrations</button>
+                    <button class="btn btn-info" onclick="runMigration('normal', true)">Run with Seeders</button>
                 </div>
 
                 <!-- Optimization -->
                 <div class="card">
                     <h3>⚡ Performance Optimization</h3>
                     <p>Optimize your Laravel application for production with caching and optimization.</p>
-                    <button class="btn btn-success" onclick="runScript('optimize.php')">Optimize Application</button>
+                    <button class="btn btn-success" onclick="runAction('optimize')">Optimize Application</button>
                 </div>
 
                 <!-- Maintenance Mode -->
                 <div class="card">
                     <h3>🔧 Maintenance Mode</h3>
                     <p>Enable or disable maintenance mode for your application.</p>
-                    <button class="btn btn-warning" onclick="runScript('maintenance.php?action=on')">Enable Maintenance</button>
-                    <button class="btn btn-success" onclick="runScript('maintenance.php?action=off')">Disable Maintenance</button>
-                    <button class="btn btn-info" onclick="runScript('maintenance.php?action=status')">Check Status</button>
+                    <button class="btn btn-warning" onclick="runAction('maintenance_on')">Enable Maintenance</button>
+                    <button class="btn btn-success" onclick="runAction('maintenance_off')">Disable Maintenance</button>
+                    <button class="btn btn-info" onclick="runAction('maintenance_status')">Check Status</button>
                 </div>
 
                 <!-- Database Backup -->
                 <div class="card">
                     <h3>💾 Database Backup</h3>
                     <p>Create a backup of your database with automatic compression.</p>
-                    <button class="btn btn-info" onclick="runScript('backup-database.php')">Create Backup</button>
+                    <button class="btn btn-info" onclick="runAction('backup')">Create Backup</button>
                 </div>
             </div>
 
@@ -274,7 +499,7 @@ ini_set('display_errors', 1);
     </div>
 
     <script>
-        function runScript(script) {
+        function runAction(action, extraData = {}) {
             const output = document.getElementById('output');
             const loading = document.getElementById('loading');
 
@@ -283,39 +508,56 @@ ini_set('display_errors', 1);
             output.style.display = 'none';
             output.textContent = '';
 
-            // Use fetch to get real output from the script
-            fetch(script)
-                .then(response => response.text())
-                .then(data => {
-                    loading.style.display = 'none';
-                    output.style.display = 'block';
-                    output.textContent = data;
-                })
-                .catch(error => {
-                    loading.style.display = 'none';
-                    output.style.display = 'block';
-                    output.textContent = 'Error executing script: ' + error.message + '\n\nPlease check the server logs for more details.';
-                });
+            // Prepare form data
+            const formData = new FormData();
+            formData.append('action', action);
+
+            // Add extra data if provided
+            Object.keys(extraData).forEach(key => {
+                formData.append(key, extraData[key]);
+            });
+
+            // Use fetch to execute the action
+            fetch('', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                loading.style.display = 'none';
+                output.style.display = 'block';
+
+                if (data.steps) {
+                    // Display step-by-step results
+                    let resultText = '';
+                    data.steps.forEach(step => {
+                        const status = step.success ? '✅' : '❌';
+                        resultText += `${status} ${step.name}\n`;
+                        resultText += `   ${step.output}\n\n`;
+                    });
+                    output.textContent = resultText;
+                } else {
+                    // Display simple result
+                    output.textContent = data.output || JSON.stringify(data, null, 2);
+                }
+            })
+            .catch(error => {
+                loading.style.display = 'none';
+                output.style.display = 'block';
+                output.textContent = 'Error executing action: ' + error.message + '\n\nPlease check the server logs for more details.';
+            });
+        }
+
+        function runMigration(migrationType, runSeeders) {
+            runAction('run_migrations', {
+                migration_type: migrationType,
+                run_seeders: runSeeders
+            });
         }
 
         // Check if we're in maintenance mode
         window.onload = function() {
-            fetch('maintenance.php?action=status')
-                .then(response => response.text())
-                .then(data => {
-                    if (data.includes('ENABLED') || data.includes('enabled')) {
-                        document.body.insertAdjacentHTML('afterbegin',
-                            '<div class="status error">⚠️ Maintenance mode is currently ENABLED</div>'
-                        );
-                    } else if (data.includes('DISABLED') || data.includes('disabled') || data.includes('Application is already up')) {
-                        document.body.insertAdjacentHTML('afterbegin',
-                            '<div class="status success">✅ Maintenance mode is DISABLED - Application is running normally</div>'
-                        );
-                    }
-                })
-                .catch(() => {
-                    // Ignore errors
-                });
+            runAction('maintenance_status');
         };
     </script>
 </body>
