@@ -20,9 +20,9 @@
                             style="background-color: var(--input-bg); border-color: var(--border-color); color: var(--text-primary);"
                             required>
                         <option value="">Select notification type...</option>
-                        @foreach($notificationTypes as $key => $label)
-                            <option value="{{ $key }}" {{ old('notification_type') == $key ? 'selected' : '' }}>
-                                {{ $label }}
+                        @foreach($notificationTypes as $type)
+                            <option value="{{ $type['value'] }}" {{ old('notification_type') == $type['value'] ? 'selected' : '' }}>
+                                {{ $type['label'] }}
                             </option>
                         @endforeach
                     </select>
@@ -75,9 +75,9 @@
                             required
                             onchange="toggleRecipientEmail()">
                         <option value="">Select recipient type...</option>
-                        @foreach($recipientTypes as $key => $label)
-                            <option value="{{ $key }}" {{ old('recipient_type') == $key ? 'selected' : '' }}>
-                                {{ $label }}
+                        @foreach($recipientTypes as $type)
+                            <option value="{{ $type['value'] }}" {{ old('recipient_type') == $type['value'] ? 'selected' : '' }}>
+                                {{ $type['label'] }}
                             </option>
                         @endforeach
                     </select>
