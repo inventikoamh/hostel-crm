@@ -25,11 +25,6 @@ Route::get('/', function () {
     return view('landing');
 })->name('home');
 
-// Test route
-Route::get('/test', function () {
-    return 'Test route working';
-});
-
 
 
 
@@ -37,6 +32,7 @@ Route::get('/test', function () {
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
 
 // Dashboard Routes
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
