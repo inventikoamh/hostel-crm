@@ -5,6 +5,31 @@
 @section('content')
 <div class="container-fluid px-4">
     <div class="bg-white rounded-xl shadow-sm border p-6" style="background-color: var(--card-bg); border-color: var(--border-color);">
+
+        <!-- Display Success/Error Messages -->
+        @if(session('success'))
+            <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if($errors->any())
+            <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                <h4 class="font-medium">Please fix the following errors:</h4>
+                <ul class="mt-2 list-disc list-inside">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <form method="POST" action="{{ route('notifications.settings.store') }}">
             @csrf
 
