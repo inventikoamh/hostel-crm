@@ -226,7 +226,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 // Tenant portal routes for profile management
 Route::prefix('tenant')->name('tenant.')->group(function () {
     Route::get('/login', [TenantPortalController::class, 'showLogin'])->name('login');
-    Route::post('/login', [TenantPortalController::class, 'login'])->name('login');
+    Route::post('/login', [TenantPortalController::class, 'login'])->name('login.post');
     
     // Protected tenant routes
     Route::middleware('auth')->group(function () {

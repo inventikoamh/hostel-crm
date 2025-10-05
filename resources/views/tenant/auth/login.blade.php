@@ -85,7 +85,7 @@
 
             <!-- Login Form -->
             <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 dark:bg-gray-800 dark:border-gray-700" style="background-color: var(--bg-primary); border-color: var(--border-color);">
-                <form class="space-y-6" method="POST" action="{{ route('tenant.login') }}">
+                <form class="space-y-6" method="POST" action="{{ route('tenant.login.post') }}">
                     @csrf
 
                     <!-- Email Field -->
