@@ -50,15 +50,15 @@ if (isset($_POST['action'])) {
 
     switch ($_POST['action']) {
         case 'check_requirements':
-            $phpVersion = phpversion();
-            $requiredExtensions = ['pdo', 'pdo_mysql', 'mbstring', 'openssl', 'tokenizer', 'xml', 'ctype', 'json', 'bcmath', 'fileinfo'];
-            $missingExtensions = [];
+$phpVersion = phpversion();
+$requiredExtensions = ['pdo', 'pdo_mysql', 'mbstring', 'openssl', 'tokenizer', 'xml', 'ctype', 'json', 'bcmath', 'fileinfo'];
+$missingExtensions = [];
 
-            foreach ($requiredExtensions as $extension) {
-                if (!extension_loaded($extension)) {
-                    $missingExtensions[] = $extension;
-                }
-            }
+foreach ($requiredExtensions as $extension) {
+    if (!extension_loaded($extension)) {
+        $missingExtensions[] = $extension;
+    }
+}
 
             echo json_encode([
                 'php_version' => $phpVersion,
@@ -75,7 +75,7 @@ if (isset($_POST['action'])) {
             $run_migrations = isset($_POST['run_migrations']) && $_POST['run_migrations'] === 'true';
 
             // Step 1: Install Composer dependencies
-            if (commandExists('composer')) {
+if (commandExists('composer')) {
                 $result = runCommand('composer install --no-dev --optimize-autoloader', 'Installing production dependencies');
                 $steps[] = [
                     'name' => 'Install Dependencies',
@@ -84,8 +84,8 @@ if (isset($_POST['action'])) {
                 ];
                 if (!$result['success']) {
                     $overall_success = false;
-                }
-            } else {
+    }
+} else {
                 $steps[] = [
                     'name' => 'Install Dependencies',
                     'success' => false,
@@ -97,14 +97,14 @@ if (isset($_POST['action'])) {
             // Step 2: Set permissions
             $directories = ['storage', 'storage/app', 'storage/framework', 'storage/framework/cache', 'storage/framework/sessions', 'storage/framework/views', 'storage/logs', 'bootstrap/cache'];
             $permission_success = true;
-            foreach ($directories as $dir) {
-                if (is_dir($dir)) {
+foreach ($directories as $dir) {
+    if (is_dir($dir)) {
                     $result = runCommand("chmod -R 775 $dir", "Setting permissions for $dir");
                     if (!$result['success']) {
                         $permission_success = false;
                     }
-                }
-            }
+    }
+}
             $steps[] = [
                 'name' => 'Set Permissions',
                 'success' => $permission_success,
@@ -113,10 +113,10 @@ if (isset($_POST['action'])) {
 
             // Step 3: Environment setup
             $env_success = true;
-            if (!file_exists('.env')) {
-                if (file_exists('.env.example')) {
+if (!file_exists('.env')) {
+    if (file_exists('.env.example')) {
                     $env_success = copy('.env.example', '.env');
-                } else {
+        } else {
                     $env_success = false;
                 }
             }
@@ -127,15 +127,15 @@ if (isset($_POST['action'])) {
             ];
 
             // Step 4: Generate app key
-            $envContent = file_get_contents('.env');
-            if (strpos($envContent, 'APP_KEY=') === false || strpos($envContent, 'APP_KEY=base64:') === false) {
+$envContent = file_get_contents('.env');
+if (strpos($envContent, 'APP_KEY=') === false || strpos($envContent, 'APP_KEY=base64:') === false) {
                 $result = runCommand('php artisan key:generate', 'Generating application key');
                 $steps[] = [
                     'name' => 'Generate App Key',
                     'success' => $result['success'],
                     'output' => $result['output']
                 ];
-            } else {
+} else {
                 $steps[] = [
                     'name' => 'Generate App Key',
                     'success' => true,
@@ -259,6 +259,62 @@ if (isset($_POST['action'])) {
             60% { content: '..'; }
             80%, 100% { content: '...'; }
         }
+        .floating-nav {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .floating-nav-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .floating-nav-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+        .floating-menu {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 10px;
+            min-width: 200px;
+            display: none;
+        }
+        .floating-menu.show {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .floating-menu a {
+            display: block;
+            padding: 8px 12px;
+            color: #374151;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background 0.2s;
+            font-size: 14px;
+        }
+        .floating-menu a:hover {
+            background: #f3f4f6;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -270,10 +326,124 @@ if (isset($_POST['action'])) {
                 Laravel Hostel CRM
             </h1>
             <p class="text-xl opacity-90">Deployment Dashboard</p>
+
+            <!-- Breadcrumb Navigation -->
+            <nav class="mt-4 flex justify-center">
+                <div class="flex items-center space-x-2 text-sm opacity-80">
+                    <a href="deploy.php" class="hover:opacity-100 transition duration-200">
+                        <i class="fas fa-home mr-1"></i>Deploy
+                    </a>
+                    <i class="fas fa-chevron-right text-xs"></i>
+                    <a href="deploy-web.php" class="hover:opacity-100 transition duration-200">
+                        <i class="fas fa-tools mr-1"></i>Advanced
+                    </a>
+                    <i class="fas fa-chevron-right text-xs"></i>
+                    <a href="clear-cache.php" class="hover:opacity-100 transition duration-200">
+                        <i class="fas fa-broom mr-1"></i>Maintenance
+                    </a>
+                    <i class="fas fa-chevron-right text-xs"></i>
+                    <a href="DEPLOY_README.md" class="hover:opacity-100 transition duration-200">
+                        <i class="fas fa-book mr-1"></i>Docs
+                    </a>
+                </div>
+            </nav>
         </div>
     </div>
 
     <div class="container mx-auto px-4 py-8">
+        <!-- Navigation Section -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8 card-hover">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">
+                <i class="fas fa-compass text-indigo-500 mr-2"></i>
+                Deployment Tools Navigation
+            </h2>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Main Deployment Tools -->
+                <div class="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200">
+                    <h3 class="font-bold text-blue-800 mb-2">
+                        <i class="fas fa-rocket mr-2"></i>
+                        Main Deployment
+                    </h3>
+                    <div class="space-y-2">
+                        <a href="deploy.php" class="block text-blue-600 hover:text-blue-800 text-sm font-medium">
+                            <i class="fas fa-globe mr-1"></i> Web Deploy (Current)
+                        </a>
+                        <a href="deploy-cli.php" class="block text-blue-600 hover:text-blue-800 text-sm font-medium">
+                            <i class="fas fa-terminal mr-1"></i> Command Line Deploy
+                        </a>
+                        <a href="deploy-web.php" class="block text-blue-600 hover:text-blue-800 text-sm font-medium">
+                            <i class="fas fa-tools mr-1"></i> Advanced Deploy Interface
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Maintenance Tools -->
+                <div class="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-lg border border-green-200">
+                    <h3 class="font-bold text-green-800 mb-2">
+                        <i class="fas fa-wrench mr-2"></i>
+                        Maintenance
+                    </h3>
+                    <div class="space-y-2">
+                        <a href="clear-cache.php" class="block text-green-600 hover:text-green-800 text-sm font-medium">
+                            <i class="fas fa-broom mr-1"></i> Clear All Caches
+                        </a>
+                        <a href="optimize.php" class="block text-green-600 hover:text-green-800 text-sm font-medium">
+                            <i class="fas fa-tachometer-alt mr-1"></i> Optimize Application
+                        </a>
+                        <a href="maintenance.php" class="block text-green-600 hover:text-green-800 text-sm font-medium">
+                            <i class="fas fa-cog mr-1"></i> Maintenance Mode
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Database Tools -->
+                <div class="bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-lg border border-purple-200">
+                    <h3 class="font-bold text-purple-800 mb-2">
+                        <i class="fas fa-database mr-2"></i>
+                        Database
+                    </h3>
+                    <div class="space-y-2">
+                        <a href="run-migrations.php" class="block text-purple-600 hover:text-purple-800 text-sm font-medium">
+                            <i class="fas fa-sync mr-1"></i> Run Migrations
+                        </a>
+                        <a href="run-migrations.php?seed=1" class="block text-purple-600 hover:text-purple-800 text-sm font-medium">
+                            <i class="fas fa-seedling mr-1"></i> Migrations + Seeders
+                        </a>
+                        <a href="backup-database.php" class="block text-purple-600 hover:text-purple-800 text-sm font-medium">
+                            <i class="fas fa-save mr-1"></i> Backup Database
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="mt-6 pt-6 border-t border-gray-200">
+                <h3 class="font-bold text-gray-700 mb-3">
+                    <i class="fas fa-bolt mr-2"></i>
+                    Quick Actions
+                </h3>
+                <div class="flex flex-wrap gap-2">
+                    <a href="deploy-web.php" class="inline-flex items-center px-3 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition duration-200">
+                        <i class="fas fa-tools mr-2"></i>
+                        Advanced Interface
+                    </a>
+                    <a href="clear-cache.php" class="inline-flex items-center px-3 py-2 bg-yellow-600 text-white text-sm font-medium rounded-md hover:bg-yellow-700 transition duration-200">
+                        <i class="fas fa-broom mr-2"></i>
+                        Clear Caches
+                    </a>
+                    <a href="optimize.php" class="inline-flex items-center px-3 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition duration-200">
+                        <i class="fas fa-tachometer-alt mr-2"></i>
+                        Optimize
+                    </a>
+                    <a href="DEPLOY_README.md" class="inline-flex items-center px-3 py-2 bg-gray-600 text-white text-sm font-medium rounded-md hover:bg-gray-700 transition duration-200">
+                        <i class="fas fa-book mr-2"></i>
+                        Documentation
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <!-- System Requirements Check -->
         <div class="bg-white rounded-lg shadow-lg p-6 mb-8 card-hover">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">
@@ -380,40 +550,95 @@ if (isset($_POST['action'])) {
 
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-8 mt-12">
-        <div class="container mx-auto px-4 text-center">
-            <div class="grid md:grid-cols-3 gap-6">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-6">
                 <div>
-                    <h3 class="font-bold text-lg mb-2">
+                    <h3 class="font-bold text-lg mb-3">
                         <i class="fas fa-info-circle mr-2"></i>
                         About This Tool
                     </h3>
-                    <p class="text-gray-300 text-sm">
+                    <p class="text-gray-300 text-sm mb-3">
                         This deployment tool automates the setup process for Laravel applications on shared hosting environments.
                     </p>
+                    <div class="space-y-1">
+                        <a href="DEPLOY_README.md" class="block text-gray-300 hover:text-white text-sm transition duration-200">
+                            <i class="fas fa-book mr-1"></i> Documentation
+                        </a>
+                        <a href="deploy-cli.php" class="block text-gray-300 hover:text-white text-sm transition duration-200">
+                            <i class="fas fa-terminal mr-1"></i> CLI Version
+                        </a>
+                    </div>
                 </div>
 
                 <div>
-                    <h3 class="font-bold text-lg mb-2">
+                    <h3 class="font-bold text-lg mb-3">
+                        <i class="fas fa-tools mr-2"></i>
+                        Deployment Tools
+                    </h3>
+                    <div class="space-y-1">
+                        <a href="deploy-web.php" class="block text-gray-300 hover:text-white text-sm transition duration-200">
+                            <i class="fas fa-cogs mr-1"></i> Advanced Interface
+                        </a>
+                        <a href="clear-cache.php" class="block text-gray-300 hover:text-white text-sm transition duration-200">
+                            <i class="fas fa-broom mr-1"></i> Clear Caches
+                        </a>
+                        <a href="optimize.php" class="block text-gray-300 hover:text-white text-sm transition duration-200">
+                            <i class="fas fa-tachometer-alt mr-1"></i> Optimize App
+                        </a>
+                        <a href="maintenance.php" class="block text-gray-300 hover:text-white text-sm transition duration-200">
+                            <i class="fas fa-wrench mr-1"></i> Maintenance Mode
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="font-bold text-lg mb-3">
+                        <i class="fas fa-database mr-2"></i>
+                        Database Tools
+                    </h3>
+                    <div class="space-y-1">
+                        <a href="run-migrations.php" class="block text-gray-300 hover:text-white text-sm transition duration-200">
+                            <i class="fas fa-sync mr-1"></i> Run Migrations
+                        </a>
+                        <a href="run-migrations.php?seed=1" class="block text-gray-300 hover:text-white text-sm transition duration-200">
+                            <i class="fas fa-seedling mr-1"></i> With Seeders
+                        </a>
+                        <a href="backup-database.php" class="block text-gray-300 hover:text-white text-sm transition duration-200">
+                            <i class="fas fa-save mr-1"></i> Backup Database
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="font-bold text-lg mb-3">
                         <i class="fas fa-shield-alt mr-2"></i>
-                        Security Note
+                        Security & Help
                     </h3>
-                    <p class="text-gray-300 text-sm">
-                        Remember to delete this deploy.php file after successful deployment for security reasons.
+                    <p class="text-gray-300 text-sm mb-3">
+                        Remember to delete deployment files after successful setup for security.
                     </p>
-                </div>
-
-                <div>
-                    <h3 class="font-bold text-lg mb-2">
-                        <i class="fas fa-question-circle mr-2"></i>
-                        Need Help?
-                    </h3>
-                    <p class="text-gray-300 text-sm">
-                        Check the Laravel documentation or contact your hosting provider for assistance.
-                    </p>
+                    <div class="space-y-1">
+                        <a href="https://laravel.com/docs" target="_blank" class="block text-gray-300 hover:text-white text-sm transition duration-200">
+                            <i class="fas fa-external-link-alt mr-1"></i> Laravel Docs
+                        </a>
+                        <a href="https://github.com" target="_blank" class="block text-gray-300 hover:text-white text-sm transition duration-200">
+                            <i class="fab fa-github mr-1"></i> GitHub
+                        </a>
+                    </div>
                 </div>
             </div>
 
-            <div class="border-t border-gray-700 mt-6 pt-6">
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center">
+                <div class="flex flex-wrap justify-center items-center gap-4 mb-4">
+                    <span class="text-gray-400 text-sm">Quick Access:</span>
+                    <a href="deploy-web.php" class="text-gray-400 hover:text-white text-sm transition duration-200">Advanced</a>
+                    <span class="text-gray-600">•</span>
+                    <a href="clear-cache.php" class="text-gray-400 hover:text-white text-sm transition duration-200">Cache</a>
+                    <span class="text-gray-600">•</span>
+                    <a href="optimize.php" class="text-gray-400 hover:text-white text-sm transition duration-200">Optimize</a>
+                    <span class="text-gray-600">•</span>
+                    <a href="run-migrations.php" class="text-gray-400 hover:text-white text-sm transition duration-200">Migrations</a>
+                </div>
                 <p class="text-gray-400 text-sm">
                     Laravel Hostel CRM Deployment Tool - Built with ❤️ for easy deployment
                 </p>
@@ -421,10 +646,56 @@ if (isset($_POST['action'])) {
         </div>
     </footer>
 
+    <!-- Floating Navigation -->
+    <div class="floating-nav">
+        <div class="floating-menu" id="floating-menu">
+            <a href="deploy-web.php">
+                <i class="fas fa-tools mr-2"></i>Advanced Interface
+            </a>
+            <a href="clear-cache.php">
+                <i class="fas fa-broom mr-2"></i>Clear Caches
+            </a>
+            <a href="optimize.php">
+                <i class="fas fa-tachometer-alt mr-2"></i>Optimize
+            </a>
+            <a href="run-migrations.php">
+                <i class="fas fa-sync mr-2"></i>Migrations
+            </a>
+            <a href="backup-database.php">
+                <i class="fas fa-save mr-2"></i>Backup DB
+            </a>
+            <a href="maintenance.php">
+                <i class="fas fa-wrench mr-2"></i>Maintenance
+            </a>
+            <a href="DEPLOY_README.md">
+                <i class="fas fa-book mr-2"></i>Documentation
+            </a>
+        </div>
+        <button class="floating-nav-btn" onclick="toggleFloatingMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+
     <script>
         // Check system requirements on page load
         document.addEventListener('DOMContentLoaded', function() {
             checkRequirements();
+        });
+
+        // Floating navigation menu
+        function toggleFloatingMenu() {
+            const menu = document.getElementById('floating-menu');
+            menu.classList.toggle('show');
+        }
+
+        // Close floating menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const floatingNav = document.querySelector('.floating-nav');
+            const menu = document.getElementById('floating-menu');
+
+            if (!floatingNav.contains(event.target)) {
+                menu.classList.remove('show');
+            }
         });
 
         function checkRequirements() {
@@ -512,7 +783,7 @@ if (isset($_POST['action'])) {
                 if (data.success) {
                     btn.innerHTML = '<i class="fas fa-check mr-2"></i>Deployment Complete';
                     btn.className = 'w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 flex items-center justify-center';
-                } else {
+} else {
                     btn.innerHTML = '<i class="fas fa-redo mr-2"></i>Retry Deployment';
                 }
             })
