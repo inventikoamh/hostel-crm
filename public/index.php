@@ -78,7 +78,6 @@ if ($_SERVER['REQUEST_URI'] !== '/') {
                     <a href="#features" class="text-gray-600 hover:text-blue-600 transition duration-300">Features</a>
                     <a href="#modules" class="text-gray-600 hover:text-blue-600 transition duration-300">Modules</a>
                     <a href="#demo" class="text-gray-600 hover:text-blue-600 transition duration-300">Demo</a>
-                    <a href="#deployment" class="text-gray-600 hover:text-blue-600 transition duration-300">Deployment</a>
                     <a href="/login" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
                         <i class="fas fa-sign-in-alt mr-2"></i>Login
                     </a>
@@ -97,7 +96,6 @@ if ($_SERVER['REQUEST_URI'] !== '/') {
                 <a href="#features" class="block px-3 py-2 text-gray-600 hover:text-blue-600">Features</a>
                 <a href="#modules" class="block px-3 py-2 text-gray-600 hover:text-blue-600">Modules</a>
                 <a href="#demo" class="block px-3 py-2 text-gray-600 hover:text-blue-600">Demo</a>
-                <a href="#deployment" class="block px-3 py-2 text-gray-600 hover:text-blue-600">Deployment</a>
                 <a href="/login" class="block px-3 py-2 bg-blue-600 text-white rounded-lg mx-3 text-center">
                     <i class="fas fa-sign-in-alt mr-2"></i>Login
                 </a>
@@ -122,8 +120,8 @@ if ($_SERVER['REQUEST_URI'] !== '/') {
                     <a href="#demo" class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 px-8 rounded-lg text-lg transition duration-300">
                         <i class="fas fa-play mr-2"></i>View Demo
                     </a>
-                    <a href="#deployment" class="bg-transparent border-2 border-white hover:bg-white hover:text-blue-600 text-white font-bold py-4 px-8 rounded-lg text-lg transition duration-300">
-                        <i class="fas fa-download mr-2"></i>Get Started
+                    <a href="/login" class="bg-transparent border-2 border-white hover:bg-white hover:text-blue-600 text-white font-bold py-4 px-8 rounded-lg text-lg transition duration-300">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Login to System
                     </a>
                 </div>
             </div>
@@ -284,25 +282,25 @@ if ($_SERVER['REQUEST_URI'] !== '/') {
             <div class="text-center mb-16">
                 <h2 class="text-4xl font-bold text-gray-800 mb-4">See It In Action</h2>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Experience the power of Hostel CRM with our interactive demo and deployment tools.
+                    Experience the power of Hostel CRM with our comprehensive demo and system overview.
                 </p>
             </div>
 
             <div class="grid md:grid-cols-2 gap-12 items-center">
                 <div>
-                    <h3 class="text-2xl font-bold mb-6">Ready to Deploy</h3>
+                    <h3 class="text-2xl font-bold mb-6">Ready to Use</h3>
                     <p class="text-gray-600 mb-6">
-                        Our system comes with comprehensive deployment tools and documentation.
-                        Get started in minutes with our automated setup process.
+                        Our system comes with comprehensive features and intuitive interface.
+                        Get started immediately with our user-friendly platform.
                     </p>
                     <div class="space-y-4">
                         <div class="flex items-center">
                             <i class="fas fa-check-circle text-green-500 mr-3"></i>
-                            <span>One-click deployment with modern web interface</span>
+                            <span>Modern web interface with intuitive design</span>
                         </div>
                         <div class="flex items-center">
                             <i class="fas fa-check-circle text-green-500 mr-3"></i>
-                            <span>Complete documentation and setup guides</span>
+                            <span>Complete documentation and user guides</span>
                         </div>
                         <div class="flex items-center">
                             <i class="fas fa-check-circle text-green-500 mr-3"></i>
@@ -316,70 +314,20 @@ if ($_SERVER['REQUEST_URI'] !== '/') {
                 </div>
 
                 <div class="bg-gray-100 p-8 rounded-lg">
-                    <h4 class="text-lg font-bold mb-4">Quick Start</h4>
+                    <h4 class="text-lg font-bold mb-4">System Access</h4>
                     <div class="space-y-3 text-sm font-mono bg-gray-800 text-green-400 p-4 rounded">
-                        <div># Clone the repository</div>
-                        <div>git clone hostel-crm</div>
-                        <div>cd hostel-crm</div>
-                        <div># Run deployment</div>
-                        <div>php deploy.php</div>
-                        <div># Access your CRM</div>
-                        <div>http://yourdomain.com</div>
+                        <div># Login to the system</div>
+                        <div>Visit: /login</div>
+                        <div># Access dashboard</div>
+                        <div>Visit: /dashboard</div>
+                        <div># Explore features</div>
+                        <div>Navigate through modules</div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Deployment Section -->
-    <section id="deployment" class="bg-gray-50 py-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-800 mb-4">Easy Deployment</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Deploy your Hostel CRM system with our comprehensive deployment tools and guides.
-                </p>
-            </div>
-
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Deployment Tools -->
-                <div class="bg-white p-8 rounded-lg shadow-lg text-center">
-                    <div class="text-4xl mb-4">
-                        <i class="fas fa-tools text-blue-600"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-4">Deployment Tools</h3>
-                    <p class="text-gray-600 mb-6">Modern web-based deployment interface with real-time progress tracking.</p>
-                    <a href="/deploy.php" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300">
-                        <i class="fas fa-rocket mr-2"></i>Deploy Now
-                    </a>
-                </div>
-
-                <!-- Documentation -->
-                <div class="bg-white p-8 rounded-lg shadow-lg text-center">
-                    <div class="text-4xl mb-4">
-                        <i class="fas fa-book text-green-600"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-4">Documentation</h3>
-                    <p class="text-gray-600 mb-6">Comprehensive guides and API documentation for easy setup.</p>
-                    <a href="/DEPLOY_README.md" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition duration-300">
-                        <i class="fas fa-file-alt mr-2"></i>Read Docs
-                    </a>
-                </div>
-
-                <!-- Support -->
-                <div class="bg-white p-8 rounded-lg shadow-lg text-center">
-                    <div class="text-4xl mb-4">
-                        <i class="fas fa-headset text-purple-600"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-4">Support</h3>
-                    <p class="text-gray-600 mb-6">Get help with deployment and configuration from our community.</p>
-                    <a href="#contact" class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition duration-300">
-                        <i class="fas fa-comments mr-2"></i>Get Help
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Technology Stack -->
     <section class="py-20">
@@ -443,17 +391,17 @@ if ($_SERVER['REQUEST_URI'] !== '/') {
                         <li><a href="#features" class="hover:text-white transition duration-300">Features</a></li>
                         <li><a href="#modules" class="hover:text-white transition duration-300">Modules</a></li>
                         <li><a href="#demo" class="hover:text-white transition duration-300">Demo</a></li>
-                        <li><a href="#deployment" class="hover:text-white transition duration-300">Deployment</a></li>
+                        <li><a href="/login" class="hover:text-white transition duration-300">Login</a></li>
                     </ul>
                 </div>
 
                 <div>
-                    <h4 class="font-bold mb-4">Resources</h4>
+                    <h4 class="font-bold mb-4">System Access</h4>
                     <ul class="space-y-2 text-gray-300">
-                        <li><a href="/DEPLOY_README.md" class="hover:text-white transition duration-300">Documentation</a></li>
-                        <li><a href="/deploy.php" class="hover:text-white transition duration-300">Deploy Tool</a></li>
-                        <li><a href="/clear-cache.php" class="hover:text-white transition duration-300">Maintenance</a></li>
-                        <li><a href="/optimize.php" class="hover:text-white transition duration-300">Optimization</a></li>
+                        <li><a href="/login" class="hover:text-white transition duration-300">Login</a></li>
+                        <li><a href="/dashboard" class="hover:text-white transition duration-300">Dashboard</a></li>
+                        <li><a href="#features" class="hover:text-white transition duration-300">Features</a></li>
+                        <li><a href="#modules" class="hover:text-white transition duration-300">Modules</a></li>
                     </ul>
                 </div>
 

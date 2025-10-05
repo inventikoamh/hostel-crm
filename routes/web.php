@@ -22,7 +22,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\TenantPortalController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/index.php');
 });
 
 
