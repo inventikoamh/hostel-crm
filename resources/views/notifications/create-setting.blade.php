@@ -170,7 +170,7 @@
             </div>
 
             <div class="flex justify-end gap-3 mt-8">
-                <a href="{{ route('notifications.settings') }}"
+                <a href="{{ route('notifications.settings.index') }}"
                    class="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium rounded-lg transition-colors duration-200">
                     <i class="fas fa-times mr-2"></i>
                     Cancel
