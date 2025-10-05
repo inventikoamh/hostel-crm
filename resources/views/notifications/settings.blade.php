@@ -9,32 +9,6 @@
 @endphp
 
 @section('content')
-    <!-- Breadcrumb -->
-    <nav class="flex mb-6" aria-label="Breadcrumb">
-        <ol class="inline-flex items-center space-x-1 md:space-x-3">
-            <li class="inline-flex items-center">
-                <a href="{{ route('dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600" style="color: var(--text-secondary);">
-                    <i class="fas fa-home mr-2"></i>
-                    Dashboard
-                </a>
-            </li>
-            <li>
-                <div class="flex items-center">
-                    <i class="fas fa-chevron-right text-gray-400 mx-1"></i>
-                    <a href="{{ route('notifications.index') }}" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2" style="color: var(--text-secondary);">
-                        Notifications
-                    </a>
-                </div>
-            </li>
-            <li aria-current="page">
-                <div class="flex items-center">
-                    <i class="fas fa-chevron-right text-gray-400 mx-1"></i>
-                    <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2" style="color: var(--text-primary);">Settings</span>
-                </div>
-            </li>
-        </ol>
-    </nav>
-
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
         <x-stats-card

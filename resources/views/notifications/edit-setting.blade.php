@@ -2,43 +2,15 @@
 
 @section('title', 'Edit Notification Setting')
 
-@section('content')
-<div class="container-fluid px-4">
-    <!-- Breadcrumb -->
-    <nav class="flex mb-6" aria-label="Breadcrumb">
-        <ol class="inline-flex items-center space-x-1 md:space-x-3">
-            <li class="inline-flex items-center">
-                <a href="{{ route('dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600" style="color: var(--text-secondary);">
-                    <i class="fas fa-home mr-2"></i>
-                    Dashboard
-                </a>
-            </li>
-            <li>
-                <div class="flex items-center">
-                    <i class="fas fa-chevron-right text-gray-400 mx-1"></i>
-                    <a href="{{ route('notifications.index') }}" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2" style="color: var(--text-secondary);">
-                        Notifications
-                    </a>
-                </div>
-            </li>
-            <li>
-                <div class="flex items-center">
-                    <i class="fas fa-chevron-right text-gray-400 mx-1"></i>
-                    <a href="{{ route('notifications.settings.index') }}" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2" style="color: var(--text-secondary);">
-                        Settings
-                    </a>
-                </div>
-            </li>
-            <li aria-current="page">
-                <div class="flex items-center">
-                    <i class="fas fa-chevron-right text-gray-400 mx-1"></i>
-                    <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2" style="color: var(--text-primary);">Edit</span>
-                </div>
-            </li>
-        </ol>
-    </nav>
+@php
+    $title = 'Edit Notification Setting';
+    $subtitle = 'Update email notification configuration';
+    $showBackButton = true;
+    $backUrl = route('notifications.settings.index');
+@endphp
 
-    <div class="bg-white rounded-xl shadow-sm border p-6" style="background-color: var(--card-bg); border-color: var(--border-color);">
+@section('content')
+<div class="bg-white rounded-xl shadow-sm border p-6" style="background-color: var(--card-bg); border-color: var(--border-color);">
 
         <!-- Display Success/Error Messages -->
         @if(session('success'))

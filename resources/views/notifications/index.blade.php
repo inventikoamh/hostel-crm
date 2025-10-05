@@ -2,12 +2,13 @@
 
 @section('title', 'Notifications')
 
+@php
+    $title = 'Notifications';
+    $subtitle = 'Manage email notifications and delivery status';
+    $showBackButton = false;
+@endphp
+
 @section('content')
-<div class="container-fluid px-4">
-    <div class="bg-white rounded-xl shadow-sm border p-6 mb-6" style="background-color: var(--card-bg); border-color: var(--border-color);">
-        <h1 class="text-2xl font-bold mb-2" style="color: var(--text-primary);">Notifications</h1>
-        <p class="text-sm" style="color: var(--text-secondary);">Manage email notifications and delivery status</p>
-    </div>
     <!-- Action Buttons -->
     <div class="bg-white rounded-xl shadow-sm border p-6 mb-6" style="background-color: var(--card-bg); border-color: var(--border-color);">
         <div class="flex flex-col sm:flex-row gap-3">

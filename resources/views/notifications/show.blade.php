@@ -2,31 +2,32 @@
 
 @section('title', 'Notification Details')
 
+@php
+    $title = 'Notification Details';
+    $subtitle = 'View notification information and status';
+    $showBackButton = true;
+    $backUrl = route('notifications.index');
+@endphp
+
 @section('content')
-<div class="container-fluid px-4">
     <div class="bg-white rounded-xl shadow-sm border p-6" style="background-color: var(--card-bg); border-color: var(--border-color);">
-        <!-- Header -->
-        <div class="flex justify-between items-start mb-6">
-            <div>
-                <h1 class="text-2xl font-bold mb-2" style="color: var(--text-primary);">Notification Details</h1>
-                <p class="text-sm" style="color: var(--text-secondary);">ID: #{{ $notification->id }}</p>
-            </div>
-            <div class="flex gap-2">
-                @if($notification->status === 'failed')
-                    <form method="POST" action="{{ route('notifications.retry', $notification) }}" class="inline">
-                        @csrf
-                        <button type="submit" class="inline-flex items-center px-3 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
-                            <i class="fas fa-redo mr-2"></i>
-                            Retry
-                        </button>
-                    </form>
-                @endif
-                <a href="{{ route('notifications.index') }}" class="inline-flex items-center px-3 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 text-sm font-medium rounded-lg transition-colors duration-200">
-                    <i class="fas fa-arrow-left mr-2"></i>
-                    Back to List
-                </a>
-            </div>
+        <!-- Notification ID -->
+        <div class="mb-6">
+            <p class="text-sm" style="color: var(--text-secondary);">ID: #{{ $notification->id }}</p>
         </div>
+
+        <!-- Action Buttons -->
+        @if($notification->status === 'failed')
+            <div class="mb-6">
+                <form method="POST" action="{{ route('notifications.retry', $notification) }}" class="inline">
+                    @csrf
+                    <button type="submit" class="inline-flex items-center px-3 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
+                        <i class="fas fa-redo mr-2"></i>
+                        Retry
+                    </button>
+                </form>
+            </div>
+        @endif
 
         <!-- Status Badge -->
         <div class="mb-6">
@@ -157,5 +158,4 @@
             </div>
         </div>
     </div>
-</div>
 @endsection
