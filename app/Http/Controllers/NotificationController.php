@@ -339,7 +339,7 @@ class NotificationController extends Controller
 
         NotificationSetting::create($request->all());
 
-        return redirect()->route('notifications.settings')
+        return redirect()->route('notifications.settings.index')
             ->with('success', 'Notification setting created successfully.');
     }
 
@@ -376,7 +376,7 @@ class NotificationController extends Controller
 
         $notificationSetting->update($request->all());
 
-        return redirect()->route('notifications.settings')
+        return redirect()->route('notifications.settings.index')
             ->with('success', 'Notification setting updated successfully.');
     }
 
@@ -403,7 +403,7 @@ class NotificationController extends Controller
     {
         $notificationSetting->delete();
 
-        return redirect()->route('notifications.settings')
+        return redirect()->route('notifications.settings.index')
             ->with('success', 'Notification setting deleted successfully.');
     }
 

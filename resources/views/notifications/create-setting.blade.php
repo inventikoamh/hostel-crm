@@ -127,6 +127,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 <!-- Send Immediately -->
                 <div>
+                    <input type="hidden" name="send_immediately" value="0">
                     <label class="flex items-center">
                         <input type="checkbox"
                                id="send_immediately"
@@ -158,6 +159,7 @@
 
             <!-- Enabled -->
             <div class="mt-6">
+                <input type="hidden" name="enabled" value="0">
                 <label class="flex items-center">
                     <input type="checkbox"
                            id="enabled"
