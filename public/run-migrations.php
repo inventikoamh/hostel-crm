@@ -36,6 +36,16 @@ function runCommand($command, $description) {
     ];
 }
 
+// Debug: Log all POST data
+error_log("POST data received: " . print_r($_POST, true));
+
+// Simple test endpoint
+if (isset($_POST['action']) && $_POST['action'] === 'test') {
+    header('Content-Type: application/json');
+    echo json_encode(['success' => true, 'message' => 'Test successful', 'post_data' => $_POST]);
+    exit;
+}
+
 // Handle AJAX requests
 if (isset($_POST['action']) && $_POST['action'] === 'run_migrations') {
     header('Content-Type: application/json');
@@ -43,7 +53,10 @@ if (isset($_POST['action']) && $_POST['action'] === 'run_migrations') {
     $steps = [];
     $overall_success = true;
     $migration_type = $_POST['migration_type'] ?? 'normal';
-    $run_seeders = isset($_POST['run_seeders']) && $_POST['run_seeders'] === 'true';
+    $run_seeders = isset($_POST['run_seeders']) && ($_POST['run_seeders'] === 'true' || $_POST['run_seeders'] === 'on');
+
+    // Debug: Log received data
+    error_log("Migration request received - Type: $migration_type, Seeders: " . ($run_seeders ? 'true' : 'false'));
 
     // Step 1: Check database connection
     $result = runCommand('php artisan migrate:status', 'Checking database connection and migration status');
@@ -272,6 +285,11 @@ if (isset($_POST['action']) && $_POST['action'] === 'run_migrations') {
                 </label>
             </div>
 
+            <button id="test-ajax-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 flex items-center justify-center mb-2">
+                <i class="fas fa-flask mr-2"></i>
+                Test AJAX Connection
+            </button>
+
             <button id="run-migrations-btn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 flex items-center justify-center">
                 <i class="fas fa-sync mr-2"></i>
                 Run Migrations
@@ -401,6 +419,32 @@ if (isset($_POST['action']) && $_POST['action'] === 'run_migrations') {
     </footer>
 
     <script>
+        // Test AJAX connection
+        document.getElementById('test-ajax-btn').addEventListener('click', function() {
+            const btn = this;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Testing...';
+
+            fetch('', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'action=test&test_data=hello'
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('AJAX Test Result: ' + JSON.stringify(data, null, 2));
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-flask mr-2"></i>Test AJAX Connection';
+            })
+            .catch(error => {
+                alert('AJAX Test Failed: ' + error.message);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-flask mr-2"></i>Test AJAX Connection';
+            });
+        });
+
         // Handle migration execution
         document.getElementById('run-migrations-btn').addEventListener('click', function() {
             const btn = this;
@@ -434,7 +478,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'run_migrations') {
                 if (data.success) {
                     btn.innerHTML = '<i class="fas fa-check mr-2"></i>Migrations Complete';
                     btn.className = 'w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 flex items-center justify-center';
-    } else {
+} else {
                     btn.innerHTML = '<i class="fas fa-redo mr-2"></i>Retry Migrations';
                 }
             })
