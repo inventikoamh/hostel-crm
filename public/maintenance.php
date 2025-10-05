@@ -42,6 +42,17 @@ function getMaintenanceStatus() {
     return file_exists($downFile);
 }
 
+// Handle GET requests for status check
+if (isset($_GET['action'])) {
+    $action = $_GET['action'];
+
+    if ($action === 'status') {
+        $isDown = getMaintenanceStatus();
+        echo $isDown ? 'Maintenance mode is ENABLED' : 'Maintenance mode is DISABLED';
+        exit;
+    }
+}
+
 // Handle AJAX requests
 if (isset($_POST['action'])) {
     header('Content-Type: application/json');

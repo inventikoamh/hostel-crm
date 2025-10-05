@@ -283,19 +283,19 @@ ini_set('display_errors', 1);
             output.style.display = 'none';
             output.textContent = '';
 
-            // Create iframe for script execution
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.src = script;
-            document.body.appendChild(iframe);
-
-            // Simulate loading time and show output
-            setTimeout(() => {
-                loading.style.display = 'none';
-                output.style.display = 'block';
-                output.textContent = 'Script executed successfully!\n\nNote: For detailed output, run the script directly via command line or check the server logs.';
-                document.body.removeChild(iframe);
-            }, 2000);
+            // Use fetch to get real output from the script
+            fetch(script)
+                .then(response => response.text())
+                .then(data => {
+                    loading.style.display = 'none';
+                    output.style.display = 'block';
+                    output.textContent = data;
+                })
+                .catch(error => {
+                    loading.style.display = 'none';
+                    output.style.display = 'block';
+                    output.textContent = 'Error executing script: ' + error.message + '\n\nPlease check the server logs for more details.';
+                });
         }
 
         // Check if we're in maintenance mode
@@ -303,9 +303,13 @@ ini_set('display_errors', 1);
             fetch('maintenance.php?action=status')
                 .then(response => response.text())
                 .then(data => {
-                    if (data.includes('ENABLED')) {
+                    if (data.includes('ENABLED') || data.includes('enabled')) {
                         document.body.insertAdjacentHTML('afterbegin',
                             '<div class="status error">⚠️ Maintenance mode is currently ENABLED</div>'
+                        );
+                    } else if (data.includes('DISABLED') || data.includes('disabled') || data.includes('Application is already up')) {
+                        document.body.insertAdjacentHTML('afterbegin',
+                            '<div class="status success">✅ Maintenance mode is DISABLED - Application is running normally</div>'
                         );
                     }
                 })
