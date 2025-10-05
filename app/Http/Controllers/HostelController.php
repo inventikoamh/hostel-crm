@@ -150,7 +150,16 @@ class HostelController extends Controller
             'rules' => 'nullable|string',
         ]);
 
-        Hostel::create($request->all());
+        // Filter out null values for time fields to avoid database constraint violations
+        $data = $request->all();
+        if (empty($data['check_in_time'])) {
+            unset($data['check_in_time']);
+        }
+        if (empty($data['check_out_time'])) {
+            unset($data['check_out_time']);
+        }
+
+        Hostel::create($data);
 
         return redirect()->route('hostels.index')->with('success', 'Hostel created successfully!');
     }
@@ -204,7 +213,17 @@ class HostelController extends Controller
         ]);
 
         $hostel = Hostel::findOrFail($id);
-        $hostel->update($request->all());
+
+        // Filter out null values for time fields to avoid database constraint violations
+        $data = $request->all();
+        if (empty($data['check_in_time'])) {
+            unset($data['check_in_time']);
+        }
+        if (empty($data['check_out_time'])) {
+            unset($data['check_out_time']);
+        }
+
+        $hostel->update($data);
 
         return redirect()->route('hostels.show', $id)->with('success', 'Hostel updated successfully!');
     }
