@@ -169,10 +169,11 @@
                                    style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);">
                         </div>
                         <div class="md:col-span-2">
-                            <label for="rules" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Rules & Regulations</label>
-                            <textarea id="rules" name="rules" rows="4"
+                            <label for="rules" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Rules & Regulations *</label>
+                            <textarea id="rules" name="rules" rows="4" required
                                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                      style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);">{{ $hostel->rules }}</textarea>
+                                      style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);"
+                                      placeholder="Enter hostel rules and regulations...">{{ $hostel->rules }}</textarea>
                         </div>
                     </div>
                 </div>

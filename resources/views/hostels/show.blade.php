@@ -142,6 +142,11 @@
                         <i class="fas fa-edit"></i>
                         Edit Hostel
                     </a>
+                    <a href="{{ route('map.hostel', $hostel->id) }}"
+                       class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2">
+                        <i class="fas fa-map"></i>
+                        View Map
+                    </a>
                     <button onclick="deleteHostel('{{ route('hostels.destroy', $hostel->id) }}')"
                             class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2">
                         <i class="fas fa-trash"></i>

@@ -127,7 +127,31 @@ class HostelController extends Controller
      */
     public function store(Request $request)
     {
-        // Validation and store logic would go here
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'address' => 'required|string|max:500',
+            'city' => 'required|string|max:100',
+            'state' => 'required|string|max:100',
+            'postal_code' => 'required|string|max:20',
+            'country' => 'required|string|max:100',
+            'phone' => 'required|string|max:20',
+            'email' => 'required|email|max:255',
+            'website' => 'nullable|url|max:255',
+            'total_rooms' => 'required|integer|min:1',
+            'total_beds' => 'required|integer|min:1',
+            'rent_per_bed' => 'required|numeric|min:0',
+            'status' => 'required|in:active,inactive,maintenance',
+            'manager_name' => 'required|string|max:255',
+            'manager_phone' => 'required|string|max:20',
+            'manager_email' => 'required|email|max:255',
+            'check_in_time' => 'required|date_format:H:i',
+            'check_out_time' => 'required|date_format:H:i',
+            'rules' => 'required|string|min:10',
+        ]);
+
+        Hostel::create($request->all());
+
         return redirect()->route('hostels.index')->with('success', 'Hostel created successfully!');
     }
 
@@ -156,7 +180,32 @@ class HostelController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // Validation and update logic would go here
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'address' => 'required|string|max:500',
+            'city' => 'required|string|max:100',
+            'state' => 'required|string|max:100',
+            'postal_code' => 'required|string|max:20',
+            'country' => 'required|string|max:100',
+            'phone' => 'required|string|max:20',
+            'email' => 'required|email|max:255',
+            'website' => 'nullable|url|max:255',
+            'total_rooms' => 'required|integer|min:1',
+            'total_beds' => 'required|integer|min:1',
+            'rent_per_bed' => 'required|numeric|min:0',
+            'status' => 'required|in:active,inactive,maintenance',
+            'manager_name' => 'required|string|max:255',
+            'manager_phone' => 'required|string|max:20',
+            'manager_email' => 'required|email|max:255',
+            'check_in_time' => 'required|date_format:H:i',
+            'check_out_time' => 'required|date_format:H:i',
+            'rules' => 'required|string|min:10',
+        ]);
+
+        $hostel = Hostel::findOrFail($id);
+        $hostel->update($request->all());
+
         return redirect()->route('hostels.show', $id)->with('success', 'Hostel updated successfully!');
     }
 
