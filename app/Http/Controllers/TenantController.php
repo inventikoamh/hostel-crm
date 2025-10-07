@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\TenantProfile;
 use App\Models\Bed;
+use App\Models\BedAssignment;
 use App\Models\Hostel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class TenantController extends Controller
 {
@@ -215,7 +217,7 @@ class TenantController extends Controller
             'emergency_contact_name' => 'required|string|max:255',
             'emergency_contact_phone' => 'required|string|max:20',
             'emergency_contact_relation' => 'required|string|max:100',
-            'bed_id' => 'required|exists:beds,id',
+            'bed_id' => 'nullable|exists:beds,id',
             'move_in_date' => 'required|date',
             'monthly_rent' => 'required|numeric|min:0',
             'security_deposit' => 'nullable|numeric|min:0',
@@ -233,7 +235,7 @@ class TenantController extends Controller
                 'phone' => $request->phone,
                 'password' => bcrypt('password123'), // Default password
                 'status' => 'active',
-                'user_type' => 'tenant'
+                'is_tenant' => true
             ]);
 
             // Create tenant profile
@@ -259,9 +261,37 @@ class TenantController extends Controller
                 'is_verified' => false
             ]);
 
-            // Assign to bed
-            $bed = Bed::findOrFail($request->bed_id);
-            $bed->assignTenant($user->id, $request->move_in_date, $request->lease_end_date, $request->monthly_rent);
+            // Assign to bed if selected using new BedAssignment system
+            if ($request->bed_id) {
+                $bed = Bed::findOrFail($request->bed_id);
+
+                // Check if lease start date is in the future
+                $leaseStartDate = Carbon::parse($request->lease_start_date);
+                $today = Carbon::today();
+
+                // Create bed assignment
+                $assignmentStatus = $leaseStartDate->isFuture() ? 'reserved' : 'active';
+
+                BedAssignment::create([
+                    'bed_id' => $bed->id,
+                    'tenant_id' => $user->id,
+                    'assigned_from' => $request->lease_start_date,
+                    'assigned_until' => $request->lease_end_date,
+                    'status' => $assignmentStatus,
+                    'monthly_rent' => $request->monthly_rent,
+                    'notes' => 'Initial assignment via tenant creation'
+                ]);
+
+                // Update bed status based on assignment
+                if ($assignmentStatus === 'active') {
+                    $bed->update(['status' => 'occupied']);
+                } else {
+                    $bed->update(['status' => 'reserved']);
+                }
+
+                // Update room status
+                $bed->room->updateStatus();
+            }
 
             DB::commit();
 
@@ -281,7 +311,7 @@ class TenantController extends Controller
      */
     public function show(TenantProfile $tenant)
     {
-        $tenant->load(['user', 'currentBed.room.hostel', 'verifiedBy', 'tenantAmenities.paidAmenity', 'invoices', 'payments', 'tenantDocuments']);
+        $tenant->load(['user', 'currentBed.room.hostel', 'verifiedBy', 'tenantAmenities.paidAmenity', 'invoices', 'payments', 'tenantDocuments', 'bedAssignments.bed.room.hostel']);
 
         return view('tenants.show', compact('tenant'));
     }
@@ -292,9 +322,7 @@ class TenantController extends Controller
     public function edit(TenantProfile $tenant)
     {
         $tenant->load(['user', 'currentBed.room.hostel']);
-        $hostels = Hostel::with(['rooms.beds' => function ($query) {
-            $query->where('status', 'available');
-        }])->get();
+        $hostels = Hostel::with(['rooms.beds'])->get();
 
         return view('tenants.edit', compact('tenant', 'hostels'));
     }
@@ -319,7 +347,12 @@ class TenantController extends Controller
             'emergency_contact_relation' => 'required|string|max:100',
             'status' => 'required|string|in:active,inactive,pending,suspended,moved_out',
             'monthly_rent' => 'required|numeric|min:0',
+            'lease_start_date' => 'required|date',
+            'lease_end_date' => 'nullable|date|after:lease_start_date',
+            'move_in_date' => 'nullable|date',
             'security_deposit' => 'nullable|numeric|min:0',
+            'bed_id' => 'nullable|exists:beds,id',
+            'hostel_id' => 'nullable|exists:hostels,id',
             'notes' => 'nullable|string|max:1000'
         ]);
 
@@ -346,9 +379,64 @@ class TenantController extends Controller
                 'emergency_contact_relation' => $request->emergency_contact_relation,
                 'status' => $request->status,
                 'monthly_rent' => $request->monthly_rent,
+                'lease_start_date' => $request->lease_start_date,
+                'lease_end_date' => $request->lease_end_date,
+                'move_in_date' => $request->move_in_date,
                 'security_deposit' => $request->security_deposit,
                 'notes' => $request->notes,
             ]);
+
+            // Handle bed assignment update
+            if ($request->bed_id) {
+                $bed = Bed::findOrFail($request->bed_id);
+                $leaseStartDate = Carbon::parse($request->lease_start_date);
+                $leaseEndDate = $request->lease_end_date ? Carbon::parse($request->lease_end_date) : null;
+
+                // Check if bed assignment has changed
+                $currentAssignment = $tenant->currentBedAssignment;
+                if (!$currentAssignment || $currentAssignment->bed_id != $bed->id) {
+                    // Release current bed assignment if exists
+                    if ($currentAssignment) {
+                        $currentAssignment->update(['status' => 'inactive']);
+                        $currentAssignment->bed->update(['status' => 'available']);
+                    }
+
+                    // Create new bed assignment
+                    $assignment = BedAssignment::create([
+                        'bed_id' => $bed->id,
+                        'tenant_id' => $tenant->user_id,
+                        'assigned_from' => $leaseStartDate,
+                        'assigned_until' => $leaseEndDate,
+                        'status' => $leaseStartDate->isFuture() ? 'reserved' : 'active',
+                        'monthly_rent' => $request->monthly_rent,
+                    ]);
+
+                    // Update bed status
+                    $bed->update([
+                        'status' => $leaseStartDate->isFuture() ? 'reserved' : 'occupied'
+                    ]);
+                } else {
+                    // Update existing assignment
+                    $currentAssignment->update([
+                        'assigned_from' => $leaseStartDate,
+                        'assigned_until' => $leaseEndDate,
+                        'status' => $leaseStartDate->isFuture() ? 'reserved' : 'active',
+                        'monthly_rent' => $request->monthly_rent,
+                    ]);
+
+                    // Update bed status
+                    $currentAssignment->bed->update([
+                        'status' => $leaseStartDate->isFuture() ? 'reserved' : 'occupied'
+                    ]);
+                }
+            } else {
+                // Remove bed assignment if no bed selected
+                $currentAssignment = $tenant->currentBedAssignment;
+                if ($currentAssignment) {
+                    $currentAssignment->update(['status' => 'inactive']);
+                    $currentAssignment->bed->update(['status' => 'available']);
+                }
+            }
 
             DB::commit();
 
@@ -394,26 +482,102 @@ class TenantController extends Controller
     /**
      * Get available beds for a specific hostel
      */
-    public function getAvailableBeds(Hostel $hostel)
+    public function getAvailableBeds(Request $request, Hostel $hostel)
     {
-        $beds = $hostel->rooms()
-            ->with(['beds' => function ($query) {
-                $query->where('status', 'available');
+        $leaseStartDate = $request->get('lease_start_date');
+        $leaseEndDate = $request->get('lease_end_date');
+
+        // Get all beds for the hostel with their assignments
+        $allBeds = $hostel->rooms()
+            ->with(['beds.assignments' => function($query) {
+                $query->whereIn('status', ['active', 'reserved']);
             }])
             ->get()
             ->pluck('beds')
-            ->flatten()
-            ->map(function ($bed) {
-                return [
-                    'id' => $bed->id,
-                    'bed_number' => $bed->bed_number,
-                    'room_name' => $bed->room->name,
-                    'room_id' => $bed->room_id,
-                    'rent' => $bed->rent
-                ];
+            ->flatten();
+
+        // Filter beds based on availability using the new BedAssignment system
+        $availableBeds = $allBeds->filter(function ($bed) use ($leaseStartDate, $leaseEndDate) {
+            // If bed is in maintenance, it's not available
+            if ($bed->status === 'maintenance') {
+                return false;
+            }
+
+            // Check assignments for conflicts
+            $conflictingAssignments = $bed->assignments->filter(function($assignment) use ($leaseStartDate, $leaseEndDate) {
+                // Skip inactive assignments
+                if ($assignment->status === 'inactive') {
+                    return false;
+                }
+
+                $assignmentStart = $assignment->assigned_from;
+                $assignmentEnd = $assignment->assigned_until;
+
+                // If no lease end date provided, just check if assignment ends before lease starts
+                if (!$leaseEndDate) {
+                    return $assignmentEnd && $assignmentEnd->gte(Carbon::parse($leaseStartDate));
+                }
+
+                // Check for date overlap
+                if ($assignmentEnd) {
+                    // Assignment has an end date - check for overlap
+                    return $assignmentStart->lt(Carbon::parse($leaseEndDate)) && $assignmentEnd->gt(Carbon::parse($leaseStartDate));
+                } else {
+                    // Assignment has no end date - check if it starts before lease ends
+                    return $assignmentStart->lt(Carbon::parse($leaseEndDate));
+                }
             });
 
-        return response()->json($beds);
+            // Bed is available if there are no conflicting assignments
+            return $conflictingAssignments->count() === 0;
+        })
+        ->map(function ($bed) {
+            return [
+                'id' => $bed->id,
+                'bed_number' => $bed->bed_number,
+                'room_name' => $bed->room->name,
+                'room_number' => $bed->room->room_number,
+                'floor' => $bed->room->floor,
+                'rent' => $bed->monthly_rent ?? $bed->room->rent_per_bed ?? 0,
+                'label' => "Bed {$bed->bed_number} - {$bed->room->room_number}",
+                'status' => $bed->status,
+                'occupied_until' => $bed->occupied_until ? $bed->occupied_until->format('Y-m-d') : null
+            ];
+        });
+
+        // Add debugging information
+        \Log::info('Available beds query', [
+            'hostel_id' => $hostel->id,
+            'lease_start_date' => $leaseStartDate,
+            'lease_end_date' => $leaseEndDate,
+            'total_beds' => $allBeds->count(),
+            'available_beds' => $availableBeds->count(),
+            'beds_by_status' => $allBeds->groupBy('status')->map->count(),
+            'reserved_beds_details' => $allBeds->where('status', 'reserved')->map(function($bed) use ($leaseStartDate, $leaseEndDate) {
+                $requestedLeaseStart = $leaseStartDate ? Carbon::parse($leaseStartDate) : null;
+                $requestedLeaseEnd = $leaseEndDate ? Carbon::parse($leaseEndDate) : null;
+                $bedReservedFrom = $bed->occupied_from ? Carbon::parse($bed->occupied_from) : null;
+                $bedReservedUntil = $bed->occupied_until ? Carbon::parse($bed->occupied_until) : null;
+
+                $hasOverlap = false;
+                if ($requestedLeaseStart && $requestedLeaseEnd && $bedReservedFrom && $bedReservedUntil) {
+                    $hasOverlap = $bedReservedFrom < $requestedLeaseEnd && $bedReservedUntil > $requestedLeaseStart;
+                }
+
+                return [
+                    'bed_id' => $bed->id,
+                    'bed_number' => $bed->bed_number,
+                    'reserved_from' => $bedReservedFrom ? $bedReservedFrom->format('Y-m-d') : null,
+                    'reserved_until' => $bedReservedUntil ? $bedReservedUntil->format('Y-m-d') : null,
+                    'requested_start' => $requestedLeaseStart ? $requestedLeaseStart->format('Y-m-d') : null,
+                    'requested_end' => $requestedLeaseEnd ? $requestedLeaseEnd->format('Y-m-d') : null,
+                    'has_overlap' => $hasOverlap,
+                    'is_available' => !$hasOverlap
+                ];
+            })
+        ]);
+
+        return response()->json($availableBeds->values());
     }
 
     /**
@@ -445,5 +609,88 @@ class TenantController extends Controller
 
         return redirect()->route('tenants.index')
             ->with('success', 'Tenant moved out successfully.');
+    }
+
+    /**
+     * Get available beds using the new BedAssignment system
+     */
+    public function getAvailableBedsNew(Request $request, Hostel $hostel)
+    {
+        $leaseStartDate = $request->get('lease_start_date');
+        $leaseEndDate = $request->get('lease_end_date');
+
+        // Get all beds for the hostel with their assignments
+        $allBeds = $hostel->rooms()
+            ->with(['beds.assignments' => function($query) {
+                $query->whereIn('status', ['active', 'reserved']);
+            }])
+            ->get()
+            ->pluck('beds')
+            ->flatten();
+
+        // Filter beds based on availability using the new assignment system
+        $availableBeds = $allBeds->filter(function ($bed) use ($leaseStartDate, $leaseEndDate) {
+            // Always show available beds (no active or reserved assignments)
+            if ($bed->status === 'available' && $bed->assignments->isEmpty()) {
+                return true;
+            }
+
+            // For maintenance beds, never show them
+            if ($bed->status === 'maintenance') {
+                return false;
+            }
+
+            // Check for overlapping assignments
+            if ($leaseStartDate) {
+                $hasOverlappingAssignment = $bed->assignments->contains(function ($assignment) use ($leaseStartDate, $leaseEndDate) {
+                    return $assignment->overlapsWith($leaseStartDate, $leaseEndDate);
+                });
+
+                // If no overlapping assignments, bed is available
+                return !$hasOverlappingAssignment;
+            }
+
+            // No lease start date provided, only show truly available beds
+            return $bed->status === 'available' && $bed->assignments->isEmpty();
+        });
+
+        \Log::info('Available beds query (new system)', [
+            'hostel_id' => $hostel->id,
+            'lease_start_date' => $leaseStartDate,
+            'lease_end_date' => $leaseEndDate,
+            'total_beds' => $allBeds->count(),
+            'available_beds' => $availableBeds->count(),
+            'bed_breakdown' => $allBeds->groupBy('status')->map->count(),
+            'assignment_details' => $allBeds->map(function($bed) {
+                return [
+                    'bed_id' => $bed->id,
+                    'bed_number' => $bed->bed_number,
+                    'status' => $bed->status,
+                    'assignments' => $bed->assignments->map(function($assignment) {
+                        return [
+                            'id' => $assignment->id,
+                            'tenant_name' => $assignment->tenant->name ?? 'Unknown',
+                            'assigned_from' => $assignment->assigned_from,
+                            'assigned_until' => $assignment->assigned_until,
+                            'status' => $assignment->status
+                        ];
+                    })
+                ];
+            })
+        ]);
+
+        return response()->json($availableBeds->map(function ($bed) {
+            return [
+                'id' => $bed->id,
+                'bed_number' => $bed->bed_number,
+                'room_name' => $bed->room->name ?? null,
+                'room_number' => $bed->room->room_number,
+                'floor' => $bed->room->floor,
+                'rent' => $bed->monthly_rent ?? $bed->room->rent_per_bed ?? 0,
+                'label' => "Bed {$bed->bed_number} - {$bed->room->room_number}",
+                'status' => $bed->status,
+                'occupied_until' => null // This will be determined by assignments
+            ];
+        }));
     }
 }

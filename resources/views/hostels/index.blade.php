@@ -28,14 +28,14 @@
     <x-stats-card
         title="Total Rooms"
         value="{{ collect($hostels)->sum('total_rooms') }}"
-        subtitle="Across all hostels"
+        subtitle="Calculated from actual rooms"
         icon="fas fa-bed"
         color="purple"
     />
     <x-stats-card
         title="Total Beds"
         value="{{ collect($hostels)->sum('total_beds') }}"
-        subtitle="Available capacity"
+        subtitle="Calculated from actual beds"
         icon="fas fa-users"
         color="orange"
     />

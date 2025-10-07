@@ -71,15 +71,19 @@ class Room extends Model
         return $query->where('hostel_id', $hostelId);
     }
 
-    // Accessors
+    // Accessors using BedAssignment system
     public function getOccupiedBedsCountAttribute()
     {
-        return $this->beds()->where('status', 'occupied')->count();
+        return $this->beds()->whereHas('assignments', function($query) {
+            $query->where('status', 'active');
+        })->count();
     }
 
     public function getAvailableBedsCountAttribute()
     {
-        return $this->beds()->where('status', 'available')->count();
+        return $this->beds()->whereDoesntHave('assignments', function($query) {
+            $query->whereIn('status', ['active', 'reserved']);
+        })->where('beds.status', 'available')->count();
     }
 
     public function getOccupancyRateAttribute()

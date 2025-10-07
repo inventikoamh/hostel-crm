@@ -19,7 +19,10 @@
                 <div class="flex gap-2">
                     @foreach($floors as $floor)
                         <a href="{{ route('map.hostel', ['hostel' => $hostel->id, 'floor' => $floor]) }}"
-                           class="px-4 py-2 rounded-lg transition-colors duration-200 {{ $floor == $selectedFloor ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                           class="px-4 py-2 rounded-lg transition-colors duration-200 {{ $floor == $selectedFloor ? 'bg-blue-600 text-white' : '' }}"
+                           style="{{ $floor != $selectedFloor ? 'background-color: var(--bg-secondary); color: var(--text-primary);' : '' }}"
+                           onmouseover="{{ $floor != $selectedFloor ? 'this.style.backgroundColor = \'var(--hover-bg)\'' : '' }}"
+                           onmouseout="{{ $floor != $selectedFloor ? 'this.style.backgroundColor = \'var(--bg-secondary)\'' : '' }}">
                             Floor {{ $floor }}
                         </a>
                     @endforeach
@@ -39,16 +42,16 @@
                     $occupancyRate = $totalBeds > 0 ? round(($occupiedBeds / $totalBeds) * 100, 1) : 0;
                 @endphp
                 <div class="text-center">
-                    <p class="text-xl font-bold text-blue-600">{{ $occupiedBeds }}</p>
-                    <p class="text-xs text-gray-500">Occupied</p>
+                    <p class="text-xl font-bold" style="color: var(--bed-occupied-color);">{{ $occupiedBeds }}</p>
+                    <p class="text-xs" style="color: var(--text-secondary);">Occupied</p>
                 </div>
                 <div class="text-center">
-                    <p class="text-xl font-bold text-green-600">{{ $availableBeds }}</p>
-                    <p class="text-xs text-gray-500">Available</p>
+                    <p class="text-xl font-bold" style="color: var(--bed-available-color);">{{ $availableBeds }}</p>
+                    <p class="text-xs" style="color: var(--text-secondary);">Available</p>
                 </div>
                 <div class="text-center">
-                    <p class="text-xl font-bold text-purple-600">{{ $occupancyRate }}%</p>
-                    <p class="text-xs text-gray-500">Occupancy</p>
+                    <p class="text-xl font-bold" style="color: var(--bed-reserved-color);">{{ $occupancyRate }}%</p>
+                    <p class="text-xs" style="color: var(--text-secondary);">Occupancy</p>
                 </div>
             </div>
         </div>
@@ -62,20 +65,20 @@
             <!-- Legend -->
             <div class="flex items-center gap-4 text-sm">
                 <div class="flex items-center gap-2">
-                    <div class="w-4 h-4 bg-green-500 rounded border"></div>
-                    <span>Available</span>
+                    <div class="w-4 h-4 rounded border" style="background-color: var(--bed-available-color);"></div>
+                    <span style="color: var(--text-secondary);">Available</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <div class="w-4 h-4 bg-blue-500 rounded border"></div>
-                    <span>Occupied</span>
+                    <div class="w-4 h-4 rounded border" style="background-color: var(--bed-occupied-color);"></div>
+                    <span style="color: var(--text-secondary);">Occupied</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <div class="w-4 h-4 bg-yellow-500 rounded border"></div>
-                    <span>Maintenance</span>
+                    <div class="w-4 h-4 rounded border" style="background-color: var(--bed-maintenance-color);"></div>
+                    <span style="color: var(--text-secondary);">Maintenance</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <div class="w-4 h-4 bg-purple-500 rounded border"></div>
-                    <span>Reserved</span>
+                    <div class="w-4 h-4 rounded border" style="background-color: var(--bed-reserved-color);"></div>
+                    <span style="color: var(--text-secondary);">Reserved</span>
                 </div>
             </div>
         </div>
@@ -88,30 +91,38 @@
                         @php
                             $room = $roomLayout['room'];
                             $occupancyRate = $room->occupancy_rate;
-                            $statusColor = match($room->status) {
-                                'available' => 'border-green-500 bg-green-50',
-                                'occupied' => 'border-blue-500 bg-blue-50',
-                                'maintenance' => 'border-yellow-500 bg-yellow-50',
-                                'reserved' => 'border-purple-500 bg-purple-50',
-                                default => 'border-gray-300 bg-gray-50'
+                            $statusBorder = match($room->status) {
+                                'available' => 'border-green-500',
+                                'occupied' => 'border-blue-500',
+                                'maintenance' => 'border-yellow-500',
+                                'reserved' => 'border-purple-500',
+                                default => 'border-gray-300'
+                            };
+                            $statusBg = match($room->status) {
+                                'available' => 'var(--bed-available-bg)',
+                                'occupied' => 'var(--bed-occupied-bg)',
+                                'maintenance' => 'var(--bed-maintenance-bg)',
+                                'reserved' => 'var(--bed-reserved-bg)',
+                                default => 'var(--bg-secondary)'
                             };
                         @endphp
-                        <div class="room-card border-2 rounded-lg p-3 cursor-pointer hover:shadow-md transition-all duration-200 {{ $statusColor }}"
+                        <div class="room-card border-2 rounded-lg p-3 cursor-pointer hover:shadow-md transition-all duration-200 {{ $statusBorder }}"
+                             style="background-color: {{ $statusBg }};"
                              onclick="showRoomDetails({{ $room->id }})"
                              data-room-id="{{ $room->id }}">
                             <!-- Room Header -->
                             <div class="flex items-center justify-between mb-2">
-                                <h4 class="font-semibold text-sm">{{ $room->room_number }}</h4>
-                                <span class="text-xs px-2 py-1 rounded {{ $room->status === 'available' ? 'bg-green-100 text-green-800' : ($room->status === 'occupied' ? 'bg-blue-100 text-blue-800' : ($room->status === 'maintenance' ? 'bg-yellow-100 text-yellow-800' : 'bg-purple-100 text-purple-800')) }}">
+                                <h4 class="font-semibold text-sm" style="color: var(--text-primary);">{{ $room->room_number }}</h4>
+                                <span class="text-xs px-2 py-1 rounded" style="background-color: {{ $room->status === 'available' ? 'var(--bed-available-badge-bg)' : ($room->status === 'occupied' ? 'var(--bed-occupied-badge-bg)' : ($room->status === 'maintenance' ? 'var(--bed-maintenance-badge-bg)' : 'var(--bed-reserved-badge-bg)')) }}; color: {{ $room->status === 'available' ? 'var(--bed-available-badge-text)' : ($room->status === 'occupied' ? 'var(--bed-occupied-badge-text)' : ($room->status === 'maintenance' ? 'var(--bed-maintenance-badge-text)' : 'var(--bed-reserved-badge-text)')) }};">
                                     {{ ucfirst($room->status) }}
                                 </span>
                             </div>
 
                             <!-- Room Type -->
-                            <p class="text-xs text-gray-600 mb-2">{{ $room->room_type_display }}</p>
+                            <p class="text-xs mb-2" style="color: var(--text-secondary);">{{ $room->room_type_display }}</p>
 
                             <!-- Bed Status -->
-                            <div class="flex items-center justify-between text-xs mb-2">
+                            <div class="flex items-center justify-between text-xs mb-2" style="color: var(--text-primary);">
                                 <span>Beds: {{ $room->occupied_beds_count }}/{{ $room->capacity }}</span>
                                 <span class="font-medium">{{ $occupancyRate }}%</span>
                             </div>
@@ -119,22 +130,22 @@
                             <!-- Bed Visual -->
                             <div class="grid grid-cols-4 gap-1 mb-2">
                                 @foreach($room->beds as $bed)
-                                    <div class="w-3 h-3 rounded-sm {{ $bed->status === 'available' ? 'bg-green-400' : ($bed->status === 'occupied' ? 'bg-blue-400' : ($bed->status === 'maintenance' ? 'bg-yellow-400' : 'bg-purple-400')) }}"
+                                    <div class="w-3 h-3 rounded-sm" style="background-color: {{ $bed->status === 'available' ? 'var(--bed-available-color)' : ($bed->status === 'occupied' ? 'var(--bed-occupied-color)' : ($bed->status === 'maintenance' ? 'var(--bed-maintenance-color)' : 'var(--bed-reserved-color)')) }};"
                                          title="Bed {{ $bed->bed_number }} - {{ ucfirst($bed->status) }}{{ $bed->tenant ? ' (' . $bed->tenant->name . ')' : '' }}">
                                     </div>
                                 @endforeach
                             </div>
 
                             <!-- Rent -->
-                            <p class="text-xs text-gray-500">₹{{ number_format($room->rent_per_bed, 0) }}/bed</p>
+                            <p class="text-xs" style="color: var(--text-secondary);">₹{{ number_format($room->rent_per_bed, 0) }}/bed</p>
                         </div>
                     @endforeach
                 </div>
             @else
                 <div class="text-center py-12">
-                    <i class="fas fa-door-open text-4xl text-gray-300 mb-4"></i>
-                    <h3 class="text-lg font-medium text-gray-500 mb-2">No Rooms on This Floor</h3>
-                    <p class="text-gray-400">Add rooms to floor {{ $selectedFloor }} to see them here.</p>
+                    <i class="fas fa-door-open text-4xl mb-4" style="color: var(--text-secondary);"></i>
+                    <h3 class="text-lg font-medium mb-2" style="color: var(--text-primary);">No Rooms on This Floor</h3>
+                    <p style="color: var(--text-secondary);">Add rooms to floor {{ $selectedFloor }} to see them here.</p>
                 </div>
             @endif
         </div>
@@ -224,11 +235,11 @@ function showRoomDetails(roomId) {
                                 </div>
                                 <div class="flex justify-between">
                                     <span style="color: var(--text-secondary);">Rent/Bed:</span>
-                                    <span class="font-medium text-green-600">₹${room.rent_per_bed.toLocaleString()}</span>
+                                    <span class="font-medium" style="color: var(--bed-available-color);">₹${room.rent_per_bed.toLocaleString()}</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span style="color: var(--text-secondary);">Status:</span>
-                                    <span class="px-2 py-1 rounded text-xs ${getStatusBadgeClass(room.status)}">${room.status.charAt(0).toUpperCase() + room.status.slice(1)}</span>
+                                    <span class="px-2 py-1 rounded text-xs" style="background-color: ${getStatusBadgeClass(room.status).split(' ')[0]}; color: ${getStatusBadgeClass(room.status).split(' ')[1]};">${room.status.charAt(0).toUpperCase() + room.status.slice(1)}</span>
                                 </div>
                             </div>
                         </div>
@@ -237,10 +248,10 @@ function showRoomDetails(roomId) {
                         <div class="bg-gray-50 rounded-lg p-4" style="background-color: var(--bg-secondary);">
                             <h4 class="font-semibold mb-3" style="color: var(--text-primary);">Features</h4>
                             <div class="space-y-2">
-                                ${room.has_ac ? '<div class="flex items-center gap-2 text-sm"><i class="fas fa-snowflake text-purple-600"></i><span>Air Conditioning</span></div>' : ''}
-                                ${room.has_attached_bathroom ? '<div class="flex items-center gap-2 text-sm"><i class="fas fa-bath text-blue-600"></i><span>Attached Bathroom</span></div>' : ''}
-                                ${room.has_balcony ? '<div class="flex items-center gap-2 text-sm"><i class="fas fa-door-open text-green-600"></i><span>Balcony</span></div>' : ''}
-                                ${!room.has_ac && !room.has_attached_bathroom && !room.has_balcony ? '<span class="text-sm text-gray-500">No special features</span>' : ''}
+                                ${room.has_ac ? '<div class="flex items-center gap-2 text-sm"><i class="fas fa-snowflake" style="color: var(--bed-reserved-color);"></i><span style="color: var(--text-primary);">Air Conditioning</span></div>' : ''}
+                                ${room.has_attached_bathroom ? '<div class="flex items-center gap-2 text-sm"><i class="fas fa-bath" style="color: var(--bed-occupied-color);"></i><span style="color: var(--text-primary);">Attached Bathroom</span></div>' : ''}
+                                ${room.has_balcony ? '<div class="flex items-center gap-2 text-sm"><i class="fas fa-door-open" style="color: var(--bed-available-color);"></i><span style="color: var(--text-primary);">Balcony</span></div>' : ''}
+                                ${!room.has_ac && !room.has_attached_bathroom && !room.has_balcony ? '<span class="text-sm" style="color: var(--text-secondary);">No special features</span>' : ''}
                             </div>
                         </div>
 
@@ -250,19 +261,19 @@ function showRoomDetails(roomId) {
                             <div class="space-y-2 text-sm">
                                 <div class="flex justify-between">
                                     <span style="color: var(--text-secondary);">Occupied:</span>
-                                    <span class="font-medium text-blue-600">${room.occupied_beds_count}</span>
+                                    <span class="font-medium" style="color: var(--bed-occupied-color);">${room.occupied_beds_count}</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span style="color: var(--text-secondary);">Available:</span>
-                                    <span class="font-medium text-green-600">${room.available_beds_count}</span>
+                                    <span class="font-medium" style="color: var(--bed-available-color);">${room.available_beds_count}</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span style="color: var(--text-secondary);">Occupancy:</span>
-                                    <span class="font-medium text-purple-600">${room.occupancy_rate}%</span>
+                                    <span class="font-medium" style="color: var(--bed-reserved-color);">${room.occupancy_rate}%</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span style="color: var(--text-secondary);">Revenue:</span>
-                                    <span class="font-medium text-green-600">₹${(room.occupied_beds_count * room.rent_per_bed).toLocaleString()}</span>
+                                    <span class="font-medium" style="color: var(--bed-available-color);">₹${(room.occupied_beds_count * room.rent_per_bed).toLocaleString()}</span>
                                 </div>
                             </div>
                         </div>
@@ -298,23 +309,41 @@ function showRoomDetails(roomId) {
             // Add beds to the layout
             bedLayout.forEach(bedData => {
                 const bed = beds.find(b => b.id === bedData.bed.id);
-                const statusColors = {
-                    'available': 'border-green-500 bg-green-100 text-green-800',
-                    'occupied': 'border-blue-500 bg-blue-100 text-blue-800',
-                    'maintenance': 'border-yellow-500 bg-yellow-100 text-yellow-800',
-                    'reserved': 'border-purple-500 bg-purple-100 text-purple-800'
+                const statusBorders = {
+                    'available': 'border-green-500',
+                    'occupied': 'border-blue-500',
+                    'maintenance': 'border-yellow-500',
+                    'reserved': 'border-purple-500'
+                };
+                const statusBgColors = {
+                    'available': 'var(--bed-available-bg)',
+                    'occupied': 'var(--bed-occupied-bg)',
+                    'maintenance': 'var(--bed-maintenance-bg)',
+                    'reserved': 'var(--bed-reserved-bg)'
+                };
+                const statusTextColors = {
+                    'available': 'var(--bed-available-badge-text)',
+                    'occupied': 'var(--bed-occupied-badge-text)',
+                    'maintenance': 'var(--bed-maintenance-badge-text)',
+                    'reserved': 'var(--bed-reserved-badge-text)'
                 };
 
+                // Get current active assignment
+                const currentAssignment = bed.assignments && bed.assignments.length > 0
+                    ? bed.assignments.find(assignment => assignment.status === 'active')
+                    : null;
+                const currentTenant = currentAssignment ? currentAssignment.tenant : null;
+
                 modalContent += `
-                    <div class="absolute border-2 rounded-lg p-2 text-center cursor-pointer hover:shadow-lg transition-all duration-200 ${statusColors[bed.status] || 'border-gray-500 bg-gray-100 text-gray-800'}"
-                         style="left: ${bedData.x}px; top: ${bedData.y}px; width: ${bedData.width}px; height: ${bedData.height}px;"
-                         onclick="showBedDetails(${bed.id}, '${bed.bed_number}', '${bed.bed_type}', '${bed.status}', ${bed.tenant ? `'${bed.tenant.name}', ${bed.tenant.id}` : 'null, null'}, '${bed.occupied_from || ''}', '${bed.occupied_until || ''}', '${bed.monthly_rent || ''}')"
-                         title="Bed ${bed.bed_number} - ${bed.status.charAt(0).toUpperCase() + bed.status.slice(1)}${bed.tenant ? ' (' + bed.tenant.name + ')' : ''}">
+                    <div class="absolute border-2 rounded-lg p-2 text-center cursor-pointer hover:shadow-lg transition-all duration-200 ${statusBorders[bed.status] || 'border-gray-500'}"
+                         style="left: ${bedData.x}px; top: ${bedData.y}px; width: ${bedData.width}px; height: ${bedData.height}px; background-color: ${statusBgColors[bed.status] || 'var(--bg-secondary)'}; color: ${statusTextColors[bed.status] || 'var(--text-primary)'};"
+                         onclick="showBedDetails(${bed.id}, '${bed.bed_number}', '${bed.bed_type}', '${bed.status}', ${currentTenant ? `'${currentTenant.name}', ${currentTenant.id}` : 'null, null'}, '${currentAssignment ? currentAssignment.assigned_from : ''}', '${currentAssignment ? currentAssignment.assigned_until : ''}', '${bed.monthly_rent || ''}')"
+                         title="Bed ${bed.bed_number} - ${bed.status.charAt(0).toUpperCase() + bed.status.slice(1)}${currentTenant ? ' (' + currentTenant.name + ')' : ''}">
                         <div class="mb-1">
                             <i class="fas fa-bed text-lg"></i>
                         </div>
                         <div class="text-xs font-semibold">${bed.bed_number}</div>
-                        ${bed.tenant ? `<div class="text-xs truncate mt-1" title="${bed.tenant.name}">${bed.tenant.name.length > 8 ? bed.tenant.name.substring(0, 8) + '...' : bed.tenant.name}</div>` : ''}
+                        ${currentTenant ? `<div class="text-xs truncate mt-1" title="${currentTenant.name}">${currentTenant.name.length > 8 ? currentTenant.name.substring(0, 8) + '...' : currentTenant.name}</div>` : ''}
                     </div>
                 `;
             });
@@ -326,19 +355,19 @@ function showRoomDetails(roomId) {
                         <!-- Legend -->
                         <div class="mt-4 flex items-center justify-center gap-6 text-sm">
                             <div class="flex items-center gap-2">
-                                <div class="w-3 h-3 bg-green-500 rounded"></div>
+                                <div class="w-3 h-3 rounded" style="background-color: var(--bed-available-color);"></div>
                                 <span style="color: var(--text-secondary);">Available</span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <div class="w-3 h-3 bg-blue-500 rounded"></div>
+                                <div class="w-3 h-3 rounded" style="background-color: var(--bed-occupied-color);"></div>
                                 <span style="color: var(--text-secondary);">Occupied</span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <div class="w-3 h-3 bg-yellow-500 rounded"></div>
+                                <div class="w-3 h-3 rounded" style="background-color: var(--bed-maintenance-color);"></div>
                                 <span style="color: var(--text-secondary);">Maintenance</span>
                             </div>
                             <div class="flex items-center gap-2">
-                                <div class="w-3 h-3 bg-purple-500 rounded"></div>
+                                <div class="w-3 h-3 rounded" style="background-color: var(--bed-reserved-color);"></div>
                                 <span style="color: var(--text-secondary);">Reserved</span>
                             </div>
                         </div>
@@ -435,12 +464,12 @@ function showBedDetails(bedId, bedNumber, bedType, bedStatus, tenantName, tenant
 
 function getStatusBadgeClass(status) {
     const classes = {
-        'available': 'bg-green-100 text-green-800',
-        'occupied': 'bg-blue-100 text-blue-800',
-        'maintenance': 'bg-yellow-100 text-yellow-800',
-        'reserved': 'bg-purple-100 text-purple-800'
+        'available': 'var(--bed-available-badge-bg) var(--bed-available-badge-text)',
+        'occupied': 'var(--bed-occupied-badge-bg) var(--bed-occupied-badge-text)',
+        'maintenance': 'var(--bed-maintenance-badge-bg) var(--bed-maintenance-badge-text)',
+        'reserved': 'var(--bed-reserved-badge-bg) var(--bed-reserved-badge-text)'
     };
-    return classes[status] || 'bg-gray-100 text-gray-800';
+    return classes[status] || 'var(--bg-secondary) var(--text-primary)';
 }
 
 function closeRoomModal() {

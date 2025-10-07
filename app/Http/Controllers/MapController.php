@@ -14,7 +14,7 @@ class MapController extends Controller
      */
     public function index()
     {
-        $hostels = Hostel::active()->with(['rooms.beds.tenant'])->get();
+        $hostels = Hostel::active()->with(['rooms.beds.assignments.tenant'])->get();
 
         return view('map.index', compact('hostels'));
     }
@@ -24,13 +24,13 @@ class MapController extends Controller
      */
     public function hostel(Request $request, $hostelId)
     {
-        $hostel = Hostel::with(['rooms.beds.tenant'])->findOrFail($hostelId);
+        $hostel = Hostel::with(['rooms.beds.assignments.tenant'])->findOrFail($hostelId);
 
         $selectedFloor = $request->get('floor', $hostel->floors[0] ?? 1);
 
         $floors = $hostel->floors;
         $roomsByFloor = $hostel->rooms()
-            ->with(['beds.tenant'])
+            ->with(['beds.assignments.tenant'])
             ->where('floor', $selectedFloor)
             ->orderBy('room_number')
             ->get();
@@ -46,7 +46,7 @@ class MapController extends Controller
      */
     public function roomDetails($roomId)
     {
-        $room = Room::with(['hostel', 'beds.tenant'])->findOrFail($roomId);
+        $room = Room::with(['hostel', 'beds.assignments.tenant'])->findOrFail($roomId);
 
         // Generate bed layout for the room
         $bedLayout = $this->generateBedLayout($room->beds);
@@ -97,7 +97,7 @@ class MapController extends Controller
      */
     public function occupancyData($hostelId, $floor = null)
     {
-        $query = Room::with(['beds.tenant'])->where('hostel_id', $hostelId);
+        $query = Room::with(['beds.assignments.tenant'])->where('hostel_id', $hostelId);
 
         if ($floor) {
             $query->where('floor', $floor);
@@ -204,34 +204,45 @@ class MapController extends Controller
      */
     public function updateBedStatus(Request $request, $bedId)
     {
-        $bed = Bed::findOrFail($bedId);
-        $status = $request->input('status');
+        try {
+            $bed = Bed::findOrFail($bedId);
+            $status = $request->input('status');
 
-        if (!in_array($status, ['available', 'occupied', 'maintenance', 'reserved'])) {
-            return response()->json(['error' => 'Invalid status'], 400);
+            if (!in_array($status, ['available', 'occupied', 'maintenance', 'reserved'])) {
+                return response()->json(['error' => 'Invalid status'], 400);
+            }
+
+            // Don't allow changing occupied beds to available or maintenance
+            if ($bed->status === 'occupied' && in_array($status, ['available', 'maintenance'])) {
+                return response()->json(['error' => 'Cannot change status of occupied bed'], 400);
+            }
+
+            if ($status === 'available') {
+                $bed->releaseTenant();
+            } elseif ($status === 'maintenance') {
+                $bed->setMaintenance($request->input('notes'));
+            } else {
+                // For other statuses, just update the status
+                $bed->update(['status' => $status]);
+                $bed->room->updateStatus();
+            }
+
+            return response()->json([
+                'success' => true,
+                'bed' => [
+                    'id' => $bed->id,
+                    'status' => $bed->status,
+                    'tenant_name' => $bed->tenant ? $bed->tenant->name : null
+                ],
+                'room' => [
+                    'id' => $bed->room->id,
+                    'status' => $bed->room->status,
+                    'occupancy_rate' => $bed->room->occupancy_rate
+                ]
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error updating bed status: ' . $e->getMessage());
+            return response()->json(['error' => 'An error occurred while updating bed status'], 500);
         }
-
-        if ($status === 'available') {
-            $bed->releaseTenant();
-        } elseif ($status === 'maintenance') {
-            $bed->setMaintenance($request->input('notes'));
-        }
-
-        $bed->update(['status' => $status]);
-        $bed->room->updateStatus();
-
-        return response()->json([
-            'success' => true,
-            'bed' => [
-                'id' => $bed->id,
-                'status' => $bed->status,
-                'tenant_name' => $bed->tenant ? $bed->tenant->name : null
-            ],
-            'room' => [
-                'id' => $bed->room->id,
-                'status' => $bed->room->status,
-                'occupancy_rate' => $bed->room->occupancy_rate
-            ]
-        ]);
     }
 }

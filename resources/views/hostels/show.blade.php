@@ -30,15 +30,15 @@
                     </div>
                     <div>
                         <label class="text-sm font-medium text-gray-600" style="color: var(--text-secondary);">Total Rooms</label>
-                        <p class="mt-1 text-sm font-medium" style="color: var(--text-primary);">{{ $hostel->total_rooms }}</p>
+                        <p class="mt-1 text-sm font-medium" style="color: var(--text-primary);">{{ $hostel->total_rooms }} <span class="text-xs text-gray-500">(calculated from actual rooms)</span></p>
                     </div>
                     <div>
                         <label class="text-sm font-medium text-gray-600" style="color: var(--text-secondary);">Total Beds</label>
-                        <p class="mt-1 text-sm font-medium" style="color: var(--text-primary);">{{ $hostel->total_beds }}</p>
+                        <p class="mt-1 text-sm font-medium" style="color: var(--text-primary);">{{ $hostel->total_beds }} <span class="text-xs text-gray-500">(calculated from actual beds)</span></p>
                     </div>
                     <div>
-                        <label class="text-sm font-medium text-gray-600" style="color: var(--text-secondary);">Rent per Bed</label>
-                        <p class="mt-1 text-sm font-medium" style="color: var(--text-primary);">${{ number_format($hostel->rent_per_bed, 2) }}</p>
+                        <label class="text-sm font-medium text-gray-600" style="color: var(--text-secondary);">Average Rent per Bed</label>
+                        <p class="mt-1 text-sm font-medium" style="color: var(--text-primary);">${{ number_format($hostel->rent_per_bed, 2) }} <span class="text-xs text-gray-500">(calculated from actual bed data)</span></p>
                     </div>
                     <div>
                         <label class="text-sm font-medium text-gray-600" style="color: var(--text-secondary);">Check-in Time</label>

@@ -24,10 +24,14 @@ The Tenant Management module provides comprehensive functionality for managing t
 - **Notification System**: Payment reminders and overdue notifications (ready for implementation)
 
 ### Bed Assignment & Integration
-- **Direct Bed Assignment**: Link tenants to specific beds with room integration
-- **Dynamic Bed Loading**: AJAX-based bed selection by hostel
+- **Advanced Bed Assignment System**: Multi-tenant bed assignment with date-based availability
+- **BedAssignment Model**: Separate tracking of bed assignments with status (active, reserved, inactive)
+- **Date-based Availability**: Check bed availability based on lease start/end dates
+- **Conditional Bed Selection**: Bed assignment only enabled when lease dates are provided
+- **Dynamic Bed Loading**: AJAX-based bed selection by hostel with real-time availability
 - **Automatic Rent Population**: Auto-fill rent from selected bed/room
-- **Occupancy Tracking**: Track bed occupancy periods and status
+- **Occupancy Tracking**: Track bed occupancy periods, reservations, and status changes
+- **Future Reservation Support**: Reserve beds for future tenants with automatic status updates
 
 ### Profile Update Request System
 - **Change Detection**: Automatic detection of profile changes to prevent empty requests
@@ -144,6 +148,31 @@ CREATE TABLE tenant_profiles (
 );
 ```
 
+### Bed Assignments Table
+```sql
+CREATE TABLE bed_assignments (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    bed_id BIGINT UNSIGNED NOT NULL,
+    tenant_id BIGINT UNSIGNED NOT NULL,
+    assigned_from DATE NOT NULL,
+    assigned_until DATE NULL,
+    status ENUM('active', 'reserved', 'inactive') DEFAULT 'active',
+    monthly_rent DECIMAL(8,2) NULL,
+    notes TEXT NULL,
+    created_at TIMESTAMP NULL,
+    updated_at TIMESTAMP NULL,
+    
+    FOREIGN KEY (bed_id) REFERENCES beds(id) ON DELETE CASCADE,
+    FOREIGN KEY (tenant_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_bed_id (bed_id),
+    INDEX idx_tenant_id (tenant_id),
+    INDEX idx_status (status),
+    INDEX idx_assigned_from (assigned_from),
+    INDEX idx_assigned_until (assigned_until),
+    INDEX idx_date_range (assigned_from, assigned_until)
+);
+```
+
 ### Tenant Profile Update Requests Table
 ```sql
 CREATE TABLE tenant_profile_update_requests (
@@ -186,6 +215,15 @@ CREATE TABLE tenant_profile_update_requests (
 - **Payment History Score** - 0-100 reliability score
 - **Days Until Billing** - Countdown to next payment due
 
+### Bed Assignment System Features
+- **Multi-Tenant Support** - Multiple tenants can be assigned to the same bed at different times
+- **Date Overlap Detection** - Prevents double-booking by checking for date conflicts
+- **Status Management** - Active (current), Reserved (future), Inactive (past) assignments
+- **Automatic Status Updates** - Reserved beds automatically become active on lease start date
+- **Conditional UI** - Bed selection only enabled when lease dates are provided
+- **Real-time Availability** - Dynamic bed loading based on current assignments and dates
+- **Assignment History** - Complete history of all bed assignments for each tenant
+
 ## Routes
 
 ### Resource Routes
@@ -197,10 +235,20 @@ Route::resource('tenants', TenantController::class)->middleware('auth');
 ```php
 Route::get('/tenants/available-beds/{hostel}', [TenantController::class, 'getAvailableBeds'])
      ->name('tenants.available-beds')->middleware('auth');
+Route::get('/tenants/available-beds-new/{hostel}', [TenantController::class, 'getAvailableBedsNew'])
+     ->name('tenants.available-beds-new')->middleware('auth');
 Route::post('/tenants/{tenant}/verify', [TenantController::class, 'verify'])
      ->name('tenants.verify')->middleware('auth');
 Route::post('/tenants/{tenant}/move-out', [TenantController::class, 'moveOut'])
      ->name('tenants.move-out')->middleware('auth');
+```
+
+### Availability Routes
+```php
+Route::get('/availability', [AvailabilityController::class, 'index'])
+     ->name('availability.index')->middleware('auth');
+Route::post('/availability/check', [AvailabilityController::class, 'check'])
+     ->name('availability.check')->middleware('auth');
 ```
 
 ### Tenant Profile Update Request Routes
@@ -260,6 +308,11 @@ Route::prefix('tenant')->name('tenant.')->group(function () {
 - Bed occupancy visualization
 - Quick tenant information access
 
+### With Availability Module
+- Real-time bed availability checking
+- Date-based availability filtering
+- Consistent availability logic across tenant creation and availability pages
+
 ### With Amenity Management
 - Amenity subscription management
 - Usage tracking and correction requests
@@ -275,6 +328,7 @@ Route::prefix('tenant')->name('tenant.')->group(function () {
 - **Analytics Dashboard**: Tenant behavior and payment analytics
 
 ## Related Documentation
+- [Availability Module](./availability.md)
 - [Paid Amenities Module](./paid-amenities.md)
 - [Usage Correction Requests](./usage-correction-requests.md)
 - [Amenity Usage Tracking](./amenity-usage.md)

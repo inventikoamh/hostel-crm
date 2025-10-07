@@ -13,9 +13,6 @@ class Bed extends Model
         'bed_number',
         'bed_type',
         'status',
-        'tenant_id',
-        'occupied_from',
-        'occupied_until',
         'monthly_rent',
         'notes',
         'is_active',
@@ -25,8 +22,6 @@ class Bed extends Model
     protected $casts = [
         'coordinates' => 'array',
         'monthly_rent' => 'decimal:2',
-        'occupied_from' => 'date',
-        'occupied_until' => 'date',
         'is_active' => 'boolean',
     ];
 
@@ -36,9 +31,26 @@ class Bed extends Model
         return $this->belongsTo(Room::class);
     }
 
-    public function tenant(): BelongsTo
+    // Note: tenant_id column has been removed in favor of BedAssignment system
+
+    public function assignments()
     {
-        return $this->belongsTo(User::class, 'tenant_id'); // Assuming tenants are users
+        return $this->hasMany(BedAssignment::class);
+    }
+
+    public function currentAssignment()
+    {
+        return $this->hasOne(BedAssignment::class)->where('status', 'active');
+    }
+
+    public function activeAssignments()
+    {
+        return $this->hasMany(BedAssignment::class)->where('status', 'active');
+    }
+
+    public function reservedAssignments()
+    {
+        return $this->hasMany(BedAssignment::class)->where('status', 'reserved');
     }
 
     // Scopes
@@ -129,37 +141,26 @@ class Bed extends Model
         return Carbon::parse($this->occupied_from)->diffInDays(Carbon::now());
     }
 
-    // Helper methods
-    public function assignTenant($tenantId, $checkInDate = null, $checkOutDate = null, $rent = null)
+    // Helper methods for BedAssignment system
+    public function getCurrentTenant()
     {
-        $this->update([
-            'tenant_id' => $tenantId,
-            'status' => 'occupied',
-            'occupied_from' => $checkInDate ?? Carbon::now(),
-            'occupied_until' => $checkOutDate,
-            'monthly_rent' => $rent
-        ]);
-
-        // Update room status
-        $this->room->updateStatus();
-
-        return $this;
+        $activeAssignment = $this->assignments()->where('status', 'active')->first();
+        return $activeAssignment ? $activeAssignment->tenant : null;
     }
 
-    public function releaseTenant()
+    public function getCurrentAssignment()
     {
-        $this->update([
-            'tenant_id' => null,
-            'status' => 'available',
-            'occupied_from' => null,
-            'occupied_until' => null,
-            'monthly_rent' => null
-        ]);
+        return $this->assignments()->where('status', 'active')->first();
+    }
 
-        // Update room status
-        $this->room->updateStatus();
+    public function hasActiveAssignment()
+    {
+        return $this->assignments()->where('status', 'active')->exists();
+    }
 
-        return $this;
+    public function hasReservedAssignment()
+    {
+        return $this->assignments()->where('status', 'reserved')->exists();
     }
 
     public function reserve($checkInDate = null, $checkOutDate = null)

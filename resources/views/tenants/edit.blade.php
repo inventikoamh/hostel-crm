@@ -23,7 +23,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label for="name" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Full Name *</label>
-                        <input type="text" id="name" name="name" value="{{ old('name', $tenant->name) }}" required
+                        <input type="text" id="name" name="name" value="{{ old('name', $tenant->user->name) }}" required
                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);">
                         @error('name')
@@ -32,7 +32,7 @@
                     </div>
                     <div>
                         <label for="email" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Email Address *</label>
-                        <input type="email" id="email" name="email" value="{{ old('email', $tenant->email) }}" required
+                        <input type="email" id="email" name="email" value="{{ old('email', $tenant->user->email) }}" required
                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);">
                         @error('email')
@@ -161,9 +161,55 @@
                 </div>
             </div>
 
+            <!-- Lease Information -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6" style="background-color: var(--card-bg); border-color: var(--border-color);">
+                <h3 class="text-lg font-semibold mb-4" style="color: var(--text-primary);">Lease Information</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="monthly_rent" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">
+                            Monthly Rent (₹)
+                            <span class="text-xs text-gray-500" id="rent_source"></span>
+                        </label>
+                        <input type="number" id="monthly_rent" name="monthly_rent" value="{{ old('monthly_rent', $profile->monthly_rent) }}" step="0.01"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                               style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);">
+                        @error('monthly_rent')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                        <p class="text-xs text-gray-500 mt-1">Will be auto-filled when bed is selected</p>
+                    </div>
+                    <div>
+                        <label for="lease_start_date" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Lease Start Date *</label>
+                        <input type="date" id="lease_start_date" name="lease_start_date" value="{{ old('lease_start_date', $profile->lease_start_date ? $profile->lease_start_date->format('Y-m-d') : '') }}" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                               style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);">
+                        @error('lease_start_date')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                        <p class="text-xs text-gray-500 mt-1">When the tenant will actually move in</p>
+                    </div>
+                    <div>
+                        <label for="lease_end_date" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Lease End Date</label>
+                        <input type="date" id="lease_end_date" name="lease_end_date" value="{{ old('lease_end_date', $profile->lease_end_date ? $profile->lease_end_date->format('Y-m-d') : '') }}"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                               style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);">
+                        @error('lease_end_date')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+
             <!-- Bed Assignment -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6" style="background-color: var(--card-bg); border-color: var(--border-color);">
-                <h3 class="text-lg font-semibold mb-4" style="color: var(--text-primary);">Bed Assignment</h3>
+                <h3 class="text-lg font-semibold mb-4" style="color: var(--text-primary);">Bed Assignment (Optional)</h3>
+                <div class="mb-4 p-3 bg-blue-50 rounded-lg" style="background-color: rgba(59, 130, 246, 0.05);">
+                    <p class="text-sm text-blue-700" style="color: var(--text-secondary);">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <strong>Note:</strong> If you assign a bed with a future lease start date, the bed will be marked as "reserved" until the lease begins.
+                        This prevents other tenants from being assigned to the same bed during the reservation period.
+                    </p>
+                </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label for="hostel_id" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Hostel</label>
@@ -235,51 +281,11 @@
                         @enderror
                     </div>
                     <div>
-                        <label for="move_out_date" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Move-out Date</label>
-                        <input type="date" id="move_out_date" name="move_out_date" value="{{ old('move_out_date', $profile->move_out_date ? $profile->move_out_date->format('Y-m-d') : '') }}"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                               style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);">
-                        @error('move_out_date')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    <div>
                         <label for="security_deposit" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Security Deposit (₹)</label>
                         <input type="number" id="security_deposit" name="security_deposit" value="{{ old('security_deposit', $profile->security_deposit) }}" step="0.01"
                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);">
                         @error('security_deposit')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    <div>
-                        <label for="monthly_rent" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">
-                            Monthly Rent (₹)
-                            <span class="text-xs text-gray-500" id="rent_source"></span>
-                        </label>
-                        <input type="number" id="monthly_rent" name="monthly_rent" value="{{ old('monthly_rent', $profile->monthly_rent) }}" step="0.01"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                               style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);">
-                        @error('monthly_rent')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                        <p class="text-xs text-gray-500 mt-1">Will be auto-filled when bed is selected</p>
-                    </div>
-                    <div>
-                        <label for="lease_start_date" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Lease Start Date</label>
-                        <input type="date" id="lease_start_date" name="lease_start_date" value="{{ old('lease_start_date', $profile->lease_start_date ? $profile->lease_start_date->format('Y-m-d') : '') }}"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                               style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);">
-                        @error('lease_start_date')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    <div>
-                        <label for="lease_end_date" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Lease End Date</label>
-                        <input type="date" id="lease_end_date" name="lease_end_date" value="{{ old('lease_end_date', $profile->lease_end_date ? $profile->lease_end_date->format('Y-m-d') : '') }}"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                               style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);">
-                        @error('lease_end_date')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
@@ -327,8 +333,17 @@
             }
 
             if (hostelId) {
-                console.log('Fetching beds for hostel:', hostelId);
-                fetch(`/tenants/available-beds/${hostelId}`)
+                const leaseStartDate = document.getElementById('lease_start_date').value;
+                const leaseEndDate = document.getElementById('lease_end_date').value;
+
+                let url = `/tenants/available-beds/${hostelId}`;
+                const params = new URLSearchParams();
+                if (leaseStartDate) params.append('lease_start_date', leaseStartDate);
+                if (leaseEndDate) params.append('lease_end_date', leaseEndDate);
+                if (params.toString()) url += '?' + params.toString();
+
+                console.log('Fetching beds for hostel:', hostelId, 'with lease dates:', leaseStartDate, 'to', leaseEndDate);
+                fetch(url)
                     .then(response => {
                         console.log('Response status:', response.status);
                         if (!response.ok) {
@@ -388,10 +403,26 @@
         // Auto-fill lease start date when move-in date is selected
         const moveInDate = document.getElementById('move_in_date');
         const leaseStartDate = document.getElementById('lease_start_date');
+        const leaseEndDate = document.getElementById('lease_end_date');
 
         moveInDate.addEventListener('change', function() {
             if (this.value && !leaseStartDate.value) {
                 leaseStartDate.value = this.value;
+            }
+        });
+
+        // Refresh available beds when lease dates change
+        leaseStartDate.addEventListener('change', function() {
+            if (hostelSelect.value) {
+                console.log('Lease start date changed, refreshing beds...');
+                hostelSelect.dispatchEvent(new Event('change'));
+            }
+        });
+
+        leaseEndDate.addEventListener('change', function() {
+            if (hostelSelect.value) {
+                console.log('Lease end date changed, refreshing beds...');
+                hostelSelect.dispatchEvent(new Event('change'));
             }
         });
     });

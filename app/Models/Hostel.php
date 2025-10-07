@@ -19,9 +19,6 @@ class Hostel extends Model
         'phone',
         'email',
         'website',
-        'total_rooms',
-        'total_beds',
-        'rent_per_bed',
         'amenities',
         'images',
         'status',
@@ -36,7 +33,6 @@ class Hostel extends Model
     protected $casts = [
         'amenities' => 'array',
         'images' => 'array',
-        'rent_per_bed' => 'decimal:2',
         'check_in_time' => 'datetime:H:i',
         'check_out_time' => 'datetime:H:i',
     ];
@@ -47,17 +43,50 @@ class Hostel extends Model
         return "{$this->address}, {$this->city}, {$this->state} {$this->postal_code}, {$this->country}";
     }
 
+    // Accessor for total rooms (calculated from actual rooms)
+    public function getTotalRoomsAttribute(): int
+    {
+        return $this->rooms()->count();
+    }
+
+    // Accessor for total beds (calculated from actual beds)
+    public function getTotalBedsAttribute(): int
+    {
+        return $this->beds()->count();
+    }
+
+    // Accessor for average rent per bed (calculated from actual bed data)
+    public function getRentPerBedAttribute(): float
+    {
+        $beds = $this->beds()->whereNotNull('monthly_rent')->get();
+        if ($beds->isEmpty()) {
+            // If no beds have monthly_rent, try to get from room rent_per_bed
+            $rooms = $this->rooms()->whereNotNull('rent_per_bed')->get();
+            if ($rooms->isEmpty()) return 0.0;
+            return $rooms->avg('rent_per_bed');
+        }
+
+        return $beds->avg('monthly_rent');
+    }
+
     // Accessor for formatted rent
     public function getFormattedRentAttribute(): string
     {
-        return '$' . number_format((float) $this->rent_per_bed, 2);
+        return '$' . number_format($this->rent_per_bed, 2);
     }
 
-    // Accessor for occupancy rate (placeholder for future implementation)
+    // Accessor for occupancy rate (calculated from BedAssignment system)
     public function getOccupancyRateAttribute(): float
     {
-        // This would be calculated based on actual tenant data
-        return 0.0;
+        $totalBeds = $this->beds()->count();
+        if ($totalBeds == 0) return 0.0;
+
+        // Count beds with active assignments
+        $occupiedBeds = $this->beds()->whereHas('assignments', function($query) {
+            $query->where('status', 'active');
+        })->count();
+
+        return round(($occupiedBeds / $totalBeds) * 100, 1);
     }
 
     // Scope for active hostels
@@ -89,24 +118,31 @@ class Hostel extends Model
         return $this->hasManyThrough(Bed::class, Room::class);
     }
 
-    // Enhanced accessors with room data
+    // Enhanced accessors with BedAssignment system
     public function getActualOccupancyRateAttribute(): float
     {
         $totalBeds = $this->beds()->count();
         if ($totalBeds == 0) return 0.0;
 
-        $occupiedBeds = $this->beds()->where('beds.status', 'occupied')->count();
+        $occupiedBeds = $this->beds()->whereHas('assignments', function($query) {
+            $query->where('status', 'active');
+        })->count();
+
         return round(($occupiedBeds / $totalBeds) * 100, 1);
     }
 
     public function getAvailableBedsCountAttribute(): int
     {
-        return $this->beds()->where('beds.status', 'available')->count();
+        return $this->beds()->whereDoesntHave('assignments', function($query) {
+            $query->whereIn('status', ['active', 'reserved']);
+        })->where('beds.status', 'available')->count();
     }
 
     public function getOccupiedBedsCountAttribute(): int
     {
-        return $this->beds()->where('beds.status', 'occupied')->count();
+        return $this->beds()->whereHas('assignments', function($query) {
+            $query->where('status', 'active');
+        })->count();
     }
 
     public function getFloorsAttribute(): array

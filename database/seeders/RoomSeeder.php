@@ -18,74 +18,54 @@ class RoomSeeder extends Seeder
         $hostels = Hostel::all();
 
         foreach ($hostels as $hostel) {
-            // Create rooms for each floor
-            $floors = [1, 2, 3]; // 3 floors per hostel
+            // Create 2 floors with 4 rooms each
+            $floors = [0, 1]; // Ground floor and 1st floor
 
             foreach ($floors as $floor) {
-                $roomsPerFloor = 8; // 8 rooms per floor
+                $roomsPerFloor = 4; // 4 rooms per floor
 
                 for ($roomNum = 1; $roomNum <= $roomsPerFloor; $roomNum++) {
-                    $roomNumber = str_pad($floor . str_pad($roomNum, 2, '0', STR_PAD_LEFT), 3, '0', STR_PAD_LEFT);
+                    $roomNumber = 'G' . $roomNum; // G1, G2, G3, G4 for ground floor, 11, 12, 13, 14 for 1st floor
+                    if ($floor > 0) {
+                        $roomNumber = $floor . $roomNum;
+                    }
 
-                    // Vary room types and capacities
-                    $roomTypes = ['single', 'double', 'triple', 'dormitory'];
-                    $roomType = $roomTypes[array_rand($roomTypes)];
-
-                    $capacity = match($roomType) {
-                        'single' => 1,
-                        'double' => 2,
-                        'triple' => 3,
-                        'dormitory' => rand(4, 6),
-                        default => 2
-                    };
-
+                    // Create a simple room structure
                     $room = Room::create([
                         'hostel_id' => $hostel->id,
                         'room_number' => $roomNumber,
-                        'room_type' => $roomType,
+                        'room_type' => 'dormitory',
                         'floor' => $floor,
-                        'capacity' => $capacity,
-                        'rent_per_bed' => rand(3000, 8000),
-                        'status' => ['available', 'occupied', 'maintenance'][array_rand(['available', 'occupied', 'maintenance'])],
-                        'description' => "A comfortable {$roomType} room on floor {$floor}",
-                        'area_sqft' => rand(80, 200),
-                        'has_attached_bathroom' => rand(0, 1),
-                        'has_balcony' => rand(0, 1),
-                        'has_ac' => rand(0, 1),
+                        'capacity' => 4, // 4 beds per room
+                        'rent_per_bed' => 5000, // ₹5000 per bed
+                        'status' => 'available',
+                        'description' => "A comfortable dormitory room on floor {$floor}",
+                        'area_sqft' => 120,
+                        'has_attached_bathroom' => true,
+                        'has_balcony' => false,
+                        'has_ac' => true,
                         'is_active' => true
                     ]);
 
-                    // Create beds for the room
-                    for ($bedNum = 1; $bedNum <= $capacity; $bedNum++) {
+                    // Create 4 beds for each room
+                    for ($bedNum = 1; $bedNum <= 4; $bedNum++) {
                         $bedNumber = str_pad($bedNum, 2, '0', STR_PAD_LEFT);
 
-                        // Determine bed type
-                        $bedType = 'single';
-                        if ($roomType === 'dormitory' && $capacity > 4) {
-                            $bedType = ($bedNum % 2 === 1) ? 'bunk_bottom' : 'bunk_top';
-                        } elseif ($roomType === 'double' && $capacity === 2) {
-                            $bedType = 'single';
-                        }
-
-                        // Random bed status
-                        $bedStatuses = ['available', 'occupied', 'maintenance', 'reserved'];
-                        $bedStatus = $bedStatuses[array_rand($bedStatuses)];
-
-                        // If room is maintenance, all beds should be maintenance
-                        if ($room->status === 'maintenance') {
-                            $bedStatus = 'maintenance';
+                        // Create beds with different statuses for testing
+                        $bedStatus = 'available';
+                        if ($roomNumber === 'G1' && $bedNum === 1) {
+                            $bedStatus = 'occupied'; // Bed 01 in G1 is occupied
+                        } elseif ($roomNumber === 'G1' && $bedNum === 4) {
+                            $bedStatus = 'maintenance'; // Bed 04 in G1 is under maintenance
                         }
 
                         Bed::create([
                             'room_id' => $room->id,
                             'bed_number' => $bedNumber,
-                            'bed_type' => $bedType,
+                            'bed_type' => 'single',
                             'status' => $bedStatus,
-                            'tenant_id' => null, // We'll assign tenants later if needed
-                            'occupied_from' => $bedStatus === 'occupied' ? now()->subDays(rand(1, 90)) : null,
-                            'occupied_until' => $bedStatus === 'occupied' ? now()->addDays(rand(30, 365)) : null,
-                            'monthly_rent' => $bedStatus === 'occupied' ? $room->rent_per_bed : null,
-                            'notes' => $bedStatus === 'maintenance' ? 'Under maintenance - ' . ['AC repair', 'Plumbing issue', 'Painting work', 'Furniture repair'][array_rand(['AC repair', 'Plumbing issue', 'Painting work', 'Furniture repair'])] : null,
+                            'monthly_rent' => 5000,
+                            'notes' => $bedStatus === 'maintenance' ? 'Under maintenance - AC repair' : null,
                             'is_active' => true
                         ]);
                     }

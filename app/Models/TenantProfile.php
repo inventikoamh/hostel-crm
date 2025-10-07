@@ -95,19 +95,25 @@ class TenantProfile extends Model
         return $this->belongsTo(User::class, 'verified_by');
     }
 
-    public function currentBed()
+    public function bedAssignments()
     {
-        return $this->hasOne(Bed::class, 'tenant_id', 'user_id')->where('status', 'occupied');
+        return $this->hasMany(BedAssignment::class, 'tenant_id', 'user_id');
     }
 
-    public function bed()
+    public function currentBedAssignment()
     {
-        return $this->hasOne(Bed::class, 'tenant_id', 'user_id')->where('status', 'occupied');
+        return $this->hasOne(BedAssignment::class, 'tenant_id', 'user_id')->where('status', 'active');
+    }
+
+    public function currentBed()
+    {
+        return $this->hasOneThrough(Bed::class, BedAssignment::class, 'tenant_id', 'id', 'user_id', 'bed_id')
+            ->where('bed_assignments.status', 'active');
     }
 
     public function beds()
     {
-        return $this->hasMany(Bed::class, 'tenant_id', 'user_id');
+        return $this->hasManyThrough(Bed::class, BedAssignment::class, 'tenant_id', 'id', 'user_id', 'bed_id');
     }
 
     public function tenantAmenities()

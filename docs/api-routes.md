@@ -130,15 +130,19 @@ DELETE /hostels/{id}
 Route::resource('tenants', TenantController::class)->middleware('auth');
 ```
 
-**Purpose**: Complete CRUD operations for tenant management with billing cycles.
+**Purpose**: Complete CRUD operations for tenant management with billing cycles and advanced bed assignment system.
 
 **Middleware**: `auth` (requires authentication).
 
 #### Additional Tenant Routes
 ```php
-// AJAX endpoint for dynamic bed loading
+// AJAX endpoint for dynamic bed loading (updated with BedAssignment system)
 Route::get('/tenants/available-beds/{hostel}', [TenantController::class, 'getAvailableBeds'])
      ->name('tenants.available-beds')->middleware('auth');
+
+// New bed assignment system endpoint
+Route::get('/tenants/available-beds-new/{hostel}', [TenantController::class, 'getAvailableBedsNew'])
+     ->name('tenants.available-beds-new')->middleware('auth');
 
 // Tenant verification
 Route::post('/tenants/{tenant}/verify', [TenantController::class, 'verify'])
@@ -177,6 +181,33 @@ Route::resource('rooms', RoomController::class)->middleware('auth');
 - `GET /rooms/{id}/edit` - Show room edit form
 - `PUT/PATCH /rooms/{id}` - Update room and manage bed capacity
 - `DELETE /rooms/{id}` - Delete room and associated beds
+
+### Availability Routes
+
+#### Availability Checking Routes
+```php
+Route::get('/availability', [AvailabilityController::class, 'index'])->name('availability.index')->middleware('auth');
+Route::post('/availability/check', [AvailabilityController::class, 'check'])->name('availability.check')->middleware('auth');
+```
+
+**Purpose**: Comprehensive room and bed availability checking based on lease dates.
+
+**Middleware**: `auth` (requires authentication).
+
+**Route Details**:
+- `GET /availability` - Display availability search form
+- `POST /availability/check` - Check availability for specified lease period
+
+**Parameters**:
+- `hostel_id` (required): ID of the hostel to check
+- `lease_start_date` (required): Start date of the lease period
+- `lease_end_date` (optional): End date of the lease period
+
+**Response**: JSON data with comprehensive availability information including:
+- Summary statistics (total rooms, available/occupied/reserved/maintenance beds)
+- Detailed room information with bed breakdowns
+- Current assignments and availability reasons
+- Date overlap detection for reserved beds
 
 ### Map Routes
 
@@ -469,6 +500,7 @@ php artisan route:list
 | PUT    | /tenants/{id}             | tenants.update   | TenantController | web,auth                                        |
 | DELETE | /tenants/{id}             | tenants.destroy  | TenantController | web,auth                                        |
 | GET    | /tenants/available-beds/{hostel} | tenants.available-beds | TenantController | web,auth                                        |
+| GET    | /tenants/available-beds-new/{hostel} | tenants.available-beds-new | TenantController | web,auth                                        |
 | POST   | /tenants/{tenant}/verify  | tenants.verify   | TenantController | web,auth                                        |
 | POST   | /tenants/{tenant}/move-out| tenants.move-out | TenantController | web,auth                                        |
 | GET    | /rooms                    | rooms.index      | RoomController   | web,auth                                        |
@@ -478,6 +510,8 @@ php artisan route:list
 | GET    | /rooms/{id}/edit          | rooms.edit       | RoomController   | web,auth                                        |
 | PUT    | /rooms/{id}               | rooms.update     | RoomController   | web,auth                                        |
 | DELETE | /rooms/{id}               | rooms.destroy    | RoomController   | web,auth                                        |
+| GET    | /availability             | availability.index | AvailabilityController | web,auth                                  |
+| POST   | /availability/check       | availability.check | AvailabilityController | web,auth                                  |
 | GET    | /map                      | map.index        | MapController    | web,auth                                        |
 | GET    | /map/hostel/{hostel}      | map.hostel       | MapController    | web,auth                                        |
 | GET    | /map/occupancy/{hostel}/{floor?} | map.occupancy | MapController    | web,auth                                        |

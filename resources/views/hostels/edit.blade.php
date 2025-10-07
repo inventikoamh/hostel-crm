@@ -35,24 +35,6 @@
                                       style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);">{{ $hostel->description }}</textarea>
                         </div>
                         <div>
-                            <label for="total_rooms" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Total Rooms *</label>
-                            <input type="number" id="total_rooms" name="total_rooms" value="{{ $hostel->total_rooms }}" required min="1"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                   style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);">
-                        </div>
-                        <div>
-                            <label for="total_beds" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Total Beds *</label>
-                            <input type="number" id="total_beds" name="total_beds" value="{{ $hostel->total_beds }}" required min="1"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                   style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);">
-                        </div>
-                        <div>
-                            <label for="rent_per_bed" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Rent per Bed *</label>
-                            <input type="number" id="rent_per_bed" name="rent_per_bed" value="{{ $hostel->rent_per_bed }}" required min="0" step="0.01"
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                   style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);">
-                        </div>
-                        <div>
                             <label for="status" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Status *</label>
                             <select id="status" name="status" required
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"

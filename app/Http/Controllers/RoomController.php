@@ -194,7 +194,7 @@ class RoomController extends Controller
      */
     public function show(string $id)
     {
-        $room = Room::with(['hostel', 'beds.tenant'])->findOrFail($id);
+        $room = Room::with(['hostel', 'beds.assignments.tenant'])->findOrFail($id);
 
         return view('rooms.show', compact('room'));
     }

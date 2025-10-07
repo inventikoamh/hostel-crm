@@ -16,6 +16,7 @@ The Hostel CRM (Customer Relationship Management) system is a comprehensive web 
 8. [Setup & Installation](#setup--installation)
 9. [Development Guidelines](#development-guidelines)
 10. [Deployment](#deployment)
+11. [Changelog](#changelog)
 
 ## System Overview
 
@@ -30,8 +31,9 @@ The Hostel CRM system is designed to streamline hostel management operations inc
 
 ### Key Features
 - **Multi-hostel Management**: Manage multiple hostels from a single interface
-- **Tenant Management**: Complete tenant lifecycle management with billing cycles
+- **Tenant Management**: Complete tenant lifecycle management with billing cycles and advanced bed assignment system
 - **Room & Bed Management**: Track room availability, bed allocation, and occupancy
+- **Availability System**: Comprehensive room and bed availability checking based on lease dates with date overlap detection
 - **Visual Map System**: Interactive floor-wise room and bed visualization
 - **Financial Management**: Complete invoicing, payment processing, and billing automation
 - **Amenity Services**: Paid services management with usage tracking and billing
@@ -114,17 +116,18 @@ The system uses a component-based approach for UI consistency:
 4. **[Tenant Module](modules/tenant.md)** - Complete tenant management with billing cycles
 5. **[Tenant Profile Update Requests](modules/tenant-profile-update-requests.md)** - Admin approval workflow for tenant profile changes
 6. **[Room Module](modules/room.md)** - Room and bed management with occupancy tracking
-7. **[Map Module](modules/map.md)** - Visual floor-wise room and bed mapping
-8. **[Enquiry Module](modules/enquiry.md)** - Public enquiry forms and admin management
-9. **[Component System](modules/components.md)** - Reusable UI components
+7. **[Availability Module](modules/availability.md)** - Room and bed availability checking system
+8. **[Map Module](modules/map.md)** - Visual floor-wise room and bed mapping
+9. **[Enquiry Module](modules/enquiry.md)** - Public enquiry forms and admin management
+10. **[Component System](modules/components.md)** - Reusable UI components
 
 ### Financial Modules
-10. **[Invoice System](modules/invoice.md)** - Comprehensive invoicing with PDF generation and email delivery
-11. **[Payment System](modules/payment.md)** - Multi-method payment processing and tracking
-12. **[Paid Amenities](modules/paid-amenities.md)** - Additional services management and tenant subscriptions
-13. **[Amenity Usage Tracking](modules/amenity-usage.md)** - Daily usage tracking with attendance-style recording
-14. **[Usage Correction Requests](modules/usage-correction-requests.md)** - Tenant correction request system with admin approval workflow
-15. **[Billing System](billing-cycle-system.md)** - Automated billing cycles and payment tracking
+11. **[Invoice System](modules/invoice.md)** - Comprehensive invoicing with PDF generation and email delivery
+12. **[Payment System](modules/payment.md)** - Multi-method payment processing and tracking
+13. **[Paid Amenities](modules/paid-amenities.md)** - Additional services management and tenant subscriptions
+14. **[Amenity Usage Tracking](modules/amenity-usage.md)** - Daily usage tracking with attendance-style recording
+15. **[Usage Correction Requests](modules/usage-correction-requests.md)** - Tenant correction request system with admin approval workflow
+16. **[Billing System](billing-cycle-system.md)** - Automated billing cycles and payment tracking
 
 ### Configuration Modules
 - **Amenities Management** - Configurable amenities for hostels
@@ -132,7 +135,7 @@ The system uses a component-based approach for UI consistency:
 - **System Settings** - Global system configuration and SMTP settings
 
 ### User Management Modules
-15. **[User Management](modules/user-management.md)** - Complete user administration with role-based access control (RBAC)
+17. **[User Management](modules/user-management.md)** - Complete user administration with role-based access control (RBAC)
     - **User Management** - User CRUD operations with status management and avatar uploads
     - **Role Management** - Role creation, assignment, and permission management
     - **Permission Management** - Granular permission system with module organization
@@ -178,6 +181,7 @@ The system uses a comprehensive component library for consistent UI:
 /hostels                # Hostel management
 /tenants                # Tenant management with billing
 /rooms                  # Room and bed management
+/availability           # Room and bed availability checking
 /map                    # Visual hostel mapping
 /enquiries              # Enquiry management
 /invoices               # Invoice management with PDF generation
@@ -331,6 +335,16 @@ All modules follow RESTful conventions:
 - Test UI components
 - Perform integration testing
 - Test on multiple browsers and devices
+
+## Changelog
+
+For a comprehensive list of recent updates, improvements, and new features, please refer to the [Changelog](CHANGELOG.md).
+
+### Recent Major Updates
+- **Bed Assignment System Overhaul**: Advanced multi-tenant bed assignment with date-based availability
+- **Enhanced Tenant Creation**: Conditional bed selection with improved user experience
+- **Availability System**: Comprehensive room and bed availability checking
+- **UI/UX Improvements**: Removed test buttons, added progressive disclosure, enhanced visual feedback
 
 ---
 

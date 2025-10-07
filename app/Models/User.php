@@ -61,14 +61,15 @@ class User extends Authenticatable
         return $this->hasOne(TenantProfile::class);
     }
 
-    public function beds(): HasMany
+    public function beds()
     {
-        return $this->hasMany(Bed::class, 'tenant_id');
+        return $this->hasManyThrough(Bed::class, BedAssignment::class, 'tenant_id', 'id', 'id', 'bed_id');
     }
 
     public function currentBed()
     {
-        return $this->hasOne(Bed::class, 'tenant_id')->where('status', 'occupied');
+        return $this->hasOneThrough(Bed::class, BedAssignment::class, 'tenant_id', 'id', 'id', 'bed_id')
+            ->where('bed_assignments.status', 'active');
     }
 
     // Helper methods

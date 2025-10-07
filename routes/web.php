@@ -19,6 +19,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TenantPortalController;
 
 Route::get('/', function () {
@@ -37,8 +38,13 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Dashboard Routes
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
 
+// Profile Routes
+Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit')->middleware('auth');
+Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update')->middleware('auth');
+
 // Tenant Routes
 Route::get('/tenants/available-beds/{hostel}', [TenantController::class, 'getAvailableBeds'])->name('tenants.available-beds')->middleware('auth');
+Route::get('/tenants/available-beds-new/{hostel}', [TenantController::class, 'getAvailableBedsNew'])->name('tenants.available-beds-new')->middleware('auth');
 Route::post('/tenants/{tenant}/verify', [TenantController::class, 'verify'])->name('tenants.verify')->middleware('auth');
 Route::post('/tenants/{tenant}/move-out', [TenantController::class, 'moveOut'])->name('tenants.move-out')->middleware('auth');
 Route::resource('tenants', TenantController::class)->middleware('auth');
@@ -117,6 +123,10 @@ Route::prefix('map')->name('map.')->middleware('auth')->group(function () {
     Route::get('/occupancy/{hostel}/{floor?}', [MapController::class, 'occupancyData'])->name('occupancy');
     Route::post('/bed/{bed}/status', [MapController::class, 'updateBedStatus'])->name('bed.status');
 });
+
+// Availability Routes (Authentication Required)
+Route::get('/availability', [App\Http\Controllers\AvailabilityController::class, 'index'])->name('availability.index')->middleware('auth');
+Route::post('/availability/check', [App\Http\Controllers\AvailabilityController::class, 'check'])->name('availability.check')->middleware('auth');
 
 // Amenity Usage Routes (Authentication Required)
 Route::get('amenity-usage', [AmenityUsageController::class, 'index'])->name('amenity-usage.index')->middleware('auth');

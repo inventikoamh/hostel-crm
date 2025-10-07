@@ -8,9 +8,6 @@
     $showBackButton = true;
     $backUrl = route('tenants.index');
     $profile = $tenant;
-    $currentBed = $tenant->currentBed;
-    $room = $currentBed ? $currentBed->room : null;
-    $hostel = $room ? $room->hostel : null;
 @endphp
 
 @section('content')
@@ -111,43 +108,83 @@
                 </div>
             </div>
 
-            <!-- Current Assignment -->
+            <!-- Bed Assignments -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6" style="background-color: var(--card-bg); border-color: var(--border-color);">
-                <h3 class="text-lg font-semibold mb-4" style="color: var(--text-primary);">Current Assignment</h3>
-                @if($currentBed && $room && $hostel)
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="text-sm font-medium text-gray-600" style="color: var(--text-secondary);">Hostel</label>
-                            <p class="mt-1 text-sm font-medium" style="color: var(--text-primary);">{{ $hostel->name }}</p>
-                        </div>
-                        <div>
-                            <label class="text-sm font-medium text-gray-600" style="color: var(--text-secondary);">Room</label>
-                            <p class="mt-1 text-sm" style="color: var(--text-primary);">{{ $room->room_number }} ({{ $room->floor }})</p>
-                        </div>
-                        <div>
-                            <label class="text-sm font-medium text-gray-600" style="color: var(--text-secondary);">Bed</label>
-                            <p class="mt-1 text-sm" style="color: var(--text-primary);">Bed {{ $currentBed->bed_number }} ({{ $currentBed->bed_type_display }})</p>
-                        </div>
-                        <div>
-                            <label class="text-sm font-medium text-gray-600" style="color: var(--text-secondary);">Monthly Rent</label>
-                            <p class="mt-1 text-sm font-semibold text-green-600">₹{{ number_format($currentBed->monthly_rent ?? $profile->monthly_rent, 2) }}</p>
-                        </div>
-                    </div>
-                    <div class="mt-4 flex gap-2">
-                        <a href="{{ route('rooms.show', $room->id) }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                            <i class="fas fa-external-link-alt mr-1"></i>
-                            View Room Details
-                        </a>
-                        <a href="{{ route('map.hostel', ['hostel' => $hostel->id, 'floor' => $room->floor]) }}" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
-                            <i class="fas fa-map mr-1"></i>
-                            View on Map
-                        </a>
+                <h3 class="text-lg font-semibold mb-4" style="color: var(--text-primary);">Bed Assignments</h3>
+                @if($tenant->bedAssignments && $tenant->bedAssignments->count() > 0)
+                    <div class="space-y-4">
+                        @foreach($tenant->bedAssignments as $assignment)
+                            @php
+                                $bed = $assignment->bed;
+                                $room = $bed->room;
+                                $hostel = $room->hostel;
+                                $statusColor = $assignment->status === 'active' ? 'text-green-600' :
+                                             ($assignment->status === 'reserved' ? 'text-purple-600' : 'text-gray-500');
+                                $statusIcon = $assignment->status === 'active' ? 'fas fa-user-check' :
+                                            ($assignment->status === 'reserved' ? 'fas fa-user-clock' : 'fas fa-user-times');
+                                $statusBg = $assignment->status === 'active' ? 'bg-green-50 border-green-200' :
+                                           ($assignment->status === 'reserved' ? 'bg-purple-50 border-purple-200' : 'bg-gray-50 border-gray-200');
+                            @endphp
+                            <div class="p-4 rounded-lg border {{ $statusBg }}" style="border-color: var(--border-color);">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center gap-2">
+                                        <i class="{{ $statusIcon }} {{ $statusColor }}"></i>
+                                        <span class="text-sm font-medium capitalize {{ $statusColor }}">{{ $assignment->status }}</span>
+                                        @if($assignment->status === 'active')
+                                            <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">Current</span>
+                                        @endif
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <a href="{{ route('rooms.show', $room->id) }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                            <i class="fas fa-external-link-alt mr-1"></i>
+                                            View Room
+                                        </a>
+                                        <a href="{{ route('map.hostel', ['hostel' => $hostel->id, 'floor' => $room->floor]) }}" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                                            <i class="fas fa-map mr-1"></i>
+                                            Map
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-600" style="color: var(--text-secondary);">Hostel</label>
+                                        <p class="mt-1 text-sm font-medium" style="color: var(--text-primary);">{{ $hostel->name }}</p>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-600" style="color: var(--text-secondary);">Room</label>
+                                        <p class="mt-1 text-sm" style="color: var(--text-primary);">{{ $room->room_number }} (Floor {{ $room->floor }})</p>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-600" style="color: var(--text-secondary);">Bed</label>
+                                        <p class="mt-1 text-sm" style="color: var(--text-primary);">Bed {{ $bed->bed_number }} ({{ $bed->bed_type_display }})</p>
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-600" style="color: var(--text-secondary);">Monthly Rent</label>
+                                        <p class="mt-1 text-sm font-semibold text-green-600">₹{{ number_format($assignment->monthly_rent ?? $bed->monthly_rent, 2) }}</p>
+                                    </div>
+                                </div>
+                                <div class="mt-3 pt-3 border-t" style="border-color: var(--border-color);">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="text-sm font-medium text-gray-600" style="color: var(--text-secondary);">Assigned From</label>
+                                            <p class="mt-1 text-sm" style="color: var(--text-primary);">{{ $assignment->assigned_from->format('M j, Y') }}</p>
+                                        </div>
+                                        @if($assignment->assigned_until)
+                                        <div>
+                                            <label class="text-sm font-medium text-gray-600" style="color: var(--text-secondary);">Assigned Until</label>
+                                            <p class="mt-1 text-sm" style="color: var(--text-primary);">{{ $assignment->assigned_until->format('M j, Y') }}</p>
+                                        </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
                 @else
                     <div class="text-center py-8">
                         <i class="fas fa-bed text-4xl text-gray-400 mb-4"></i>
-                        <p class="text-gray-600" style="color: var(--text-secondary);">No bed assigned</p>
-                        <p class="text-sm text-gray-500 mt-1">This tenant is not currently assigned to any bed.</p>
+                        <p class="text-gray-600" style="color: var(--text-secondary);">No bed assignments</p>
+                        <p class="text-sm text-gray-500 mt-1">This tenant has not been assigned to any beds.</p>
                     </div>
                 @endif
             </div>
