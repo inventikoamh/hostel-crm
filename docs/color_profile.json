@@ -1,0 +1,40 @@
+{
+  "colorProfile": {
+    "primary": {
+      "name": "Warm Yellow",
+      "hex": "#FEC84B",
+      "usage": ["buttons", "highlight sections", "accent backgrounds"]
+    },
+    "secondary": {
+      "name": "Soft Coral",
+      "hex": "#F9A8A8",
+      "usage": ["service cards", "background blocks", "CTA areas"]
+    },
+    "tertiary": {
+      "name": "Light Teal",
+      "hex": "#9ED2D2",
+      "usage": ["service cards", "hover states", "subtle accents"]
+    },
+    "neutral": {
+      "name": "Cream",
+      "hex": "#FDF6EC",
+      "usage": ["page background", "section dividers"]
+    },
+    "dark": {
+      "name": "Charcoal",
+      "hex": "#2E2E2E",
+      "usage": ["footer background", "text headings", "nav bar text"]
+    },
+    "light": {
+      "name": "White",
+      "hex": "#FFFFFF",
+      "usage": ["text contrast", "card backgrounds", "icons"]
+    },
+    "supporting": {
+      "name": "Soft Orange",
+      "hex": "#F6B980",
+      "usage": ["background illustrations", "graphic accents"]
+    }
+  }
+}
+

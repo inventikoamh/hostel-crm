@@ -22,10 +22,13 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\TenantPortalController;
+use App\Http\Controllers\LandingController;
 
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
+
+Route::get('/landing', [LandingController::class, 'index'])->name('landing');
 
 
 

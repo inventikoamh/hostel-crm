@@ -1,0 +1,67 @@
+{
+  "colorProfile": {
+    "primary": {
+      "name": "Deep Teal",
+      "hex": "#0D9488",
+      "usage": ["primary buttons", "hero CTA", "main highlights"]
+    },
+    "secondary": {
+      "name": "Warm Gold",
+      "hex": "#D97706",
+      "usage": ["secondary actions", "hover effects", "accent elements"]
+    },
+    "accent": {
+      "name": "Emerald Green",
+      "hex": "#10B981",
+      "usage": ["icons", "graphs", "success elements", "tertiary accents"]
+    },
+    "neutral": {
+      "name": "Cloud White",
+      "hex": "#F8FAFC",
+      "usage": ["backgrounds", "cards", "forms"]
+    },
+    "dark": {
+      "name": "Midnight Navy",
+      "hex": "#0F172A",
+      "usage": ["main text", "headers", "footer background"]
+    },
+    "mid": {
+      "name": "Slate Blue",
+      "hex": "#475569",
+      "usage": ["paragraph text", "neutral UI components"]
+    },
+    "light": {
+      "name": "Soft Mist",
+      "hex": "#E2E8F0",
+      "usage": ["borders", "input fields", "secondary backgrounds"]
+    },
+    "alert": {
+      "name": "Forest Green",
+      "hex": "#059669",
+      "usage": ["positive stats", "success indicators", "growth highlights"]
+    },
+    "warning": {
+      "name": "Crimson Red",
+      "hex": "#DC2626",
+      "usage": ["alerts", "badges", "attention highlights"]
+    },
+    "gradient": {
+      "hero": {
+        "from": "#0D9488",
+        "to": "#D97706",
+        "angle": "135deg",
+        "usage": ["hero background", "banner highlights"]
+      },
+      "accent": {
+        "from": "#10B981",
+        "to": "#059669",
+        "angle": "90deg",
+        "usage": ["cards", "hover effects", "UI ribbons"]
+      }
+    },
+    "shadows": {
+      "card": "0px 8px 24px rgba(15, 23, 42, 0.1)",
+      "button": "0px 4px 16px rgba(13, 148, 136, 0.3)"
+    }
+  }
+}
