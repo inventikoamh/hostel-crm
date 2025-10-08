@@ -314,6 +314,18 @@
             margin-bottom: 0.75rem;
         }
 
+        .nav-section-header h3 {
+            color: #64748b;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        [data-theme="dark"] .nav-section-header h3 {
+            color: #9ca3af;
+        }
+
         .nav-item {
             color: #64748b;
             transition: all 0.2s ease;
@@ -1006,6 +1018,15 @@
         function toggleUserManagementDropdown() {
             const dropdown = document.getElementById('userManagementDropdown');
             const icon = document.getElementById('userManagementDropdownIcon');
+
+            dropdown.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+        }
+
+        // Super Admin dropdown functionality
+        function toggleSuperAdminDropdown() {
+            const dropdown = document.getElementById('superAdminDropdown');
+            const icon = document.getElementById('superAdminDropdownIcon');
 
             dropdown.classList.toggle('hidden');
             icon.classList.toggle('rotate-180');

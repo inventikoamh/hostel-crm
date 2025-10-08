@@ -247,33 +247,91 @@
             </div>
         </div>
 
-                <!-- Configuration Dropdown -->
-                    <div class="nav-dropdown">
-                        <button onclick="toggleConfigDropdown()" class="nav-item nav-dropdown-toggle {{ request()->routeIs('config.*') ? 'active' : '' }} group flex items-center justify-between w-full px-4 py-3 rounded-xl transition-all duration-200">
+        @if(auth()->user() && auth()->user()->isSuperAdmin())
+        <!-- Super Admin Section -->
+        <div class="nav-section">
+            <div class="nav-section-header flex items-center px-4 mb-3">
+                <div class="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Super Admin</h3>
+            </div>
+            <div class="space-y-1">
+                <!-- Super Admin Dropdown -->
+                <div class="nav-dropdown">
+                    <button onclick="toggleSuperAdminDropdown()" class="nav-item nav-dropdown-toggle {{ request()->routeIs('super-admin.*') ? 'active' : '' }} group flex items-center justify-between w-full px-4 py-3 rounded-xl transition-all duration-200">
                         <div class="flex items-center">
-                                <div class="nav-icon w-10 h-10 flex items-center justify-center rounded-lg mr-3 transition-all duration-200">
-                                    <i class="fas fa-cog text-lg"></i>
-                                </div>
-                                <span class="nav-text font-medium">System Config</span>
+                            <div class="nav-icon w-10 h-10 flex items-center justify-center rounded-lg mr-3 transition-all duration-200">
+                                <i class="fas fa-crown text-lg"></i>
+                            </div>
+                            <span class="nav-text font-medium">Super Admin</span>
                         </div>
-                            <i class="fas fa-chevron-down text-sm transition-transform duration-200 nav-dropdown-icon" id="configDropdownIcon"></i>
+                        <i class="fas fa-chevron-down text-sm transition-transform duration-200 nav-dropdown-icon" id="superAdminDropdownIcon"></i>
                     </button>
 
                     <!-- Dropdown Content -->
-                        <div id="configDropdown" class="nav-dropdown-content ml-6 mt-1 space-y-1 {{ request()->routeIs('config.*') ? '' : 'hidden' }}">
-                            <a href="{{ route('config.amenities.index') }}" class="nav-sub-item {{ request()->routeIs('config.amenities.*') ? 'active' : '' }} group flex items-center px-4 py-2 rounded-lg text-sm transition-all duration-200">
-                                <div class="nav-sub-icon w-8 h-8 flex items-center justify-center rounded-lg mr-3 transition-all duration-200">
-                                    <i class="fas fa-star text-sm"></i>
-                                </div>
-                                <span class="nav-text font-medium">Hostel Amenities</span>
-                            </a>
-                            <a href="{{ route('config.smtp-settings') }}" class="nav-sub-item {{ request()->routeIs('config.smtp-settings*') ? 'active' : '' }} group flex items-center px-4 py-2 rounded-lg text-sm transition-all duration-200">
-                                <div class="nav-sub-icon w-8 h-8 flex items-center justify-center rounded-lg mr-3 transition-all duration-200">
-                                    <i class="fas fa-envelope text-sm"></i>
-                                </div>
-                                <span class="nav-text font-medium">SMTP Settings</span>
-                            </a>
+                    <div id="superAdminDropdown" class="nav-dropdown-content ml-6 mt-1 space-y-1 {{ request()->routeIs('super-admin.*') ? '' : 'hidden' }}">
+                        <a href="{{ route('super-admin.dashboard') }}" class="nav-sub-item {{ request()->routeIs('super-admin.dashboard') ? 'active' : '' }} group flex items-center px-4 py-2 rounded-lg text-sm transition-all duration-200">
+                            <div class="nav-sub-icon w-8 h-8 flex items-center justify-center rounded-lg mr-3 transition-all duration-200">
+                                <i class="fas fa-tachometer-alt text-sm"></i>
+                            </div>
+                            <span class="nav-text font-medium">Dashboard</span>
+                        </a>
+                        <a href="{{ route('super-admin.settings') }}" class="nav-sub-item {{ request()->routeIs('super-admin.settings') ? 'active' : '' }} group flex items-center px-4 py-2 rounded-lg text-sm transition-all duration-200">
+                            <div class="nav-sub-icon w-8 h-8 flex items-center justify-center rounded-lg mr-3 transition-all duration-200">
+                                <i class="fas fa-cog text-sm"></i>
+                            </div>
+                            <span class="nav-text font-medium">System Settings</span>
+                        </a>
+                        <a href="{{ route('super-admin.users') }}" class="nav-sub-item {{ request()->routeIs('super-admin.users') ? 'active' : '' }} group flex items-center px-4 py-2 rounded-lg text-sm transition-all duration-200">
+                            <div class="nav-sub-icon w-8 h-8 flex items-center justify-center rounded-lg mr-3 transition-all duration-200">
+                                <i class="fas fa-users-cog text-sm"></i>
+                            </div>
+                            <span class="nav-text font-medium">User Management</span>
+                        </a>
+                        <a href="{{ route('super-admin.system-health') }}" class="nav-sub-item {{ request()->routeIs('super-admin.system-health') ? 'active' : '' }} group flex items-center px-4 py-2 rounded-lg text-sm transition-all duration-200">
+                            <div class="nav-sub-icon w-8 h-8 flex items-center justify-center rounded-lg mr-3 transition-all duration-200">
+                                <i class="fas fa-heartbeat text-sm"></i>
+                            </div>
+                            <span class="nav-text font-medium">System Health</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        <!-- Configuration Section -->
+        <div class="nav-section">
+            <div class="nav-section-header flex items-center px-4 mb-3">
+                <div class="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                <h3 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Configuration</h3>
+            </div>
+            <div class="space-y-1">
+                <!-- Configuration Dropdown -->
+                <div class="nav-dropdown">
+                    <button onclick="toggleConfigDropdown()" class="nav-item nav-dropdown-toggle {{ request()->routeIs('config.*') ? 'active' : '' }} group flex items-center justify-between w-full px-4 py-3 rounded-xl transition-all duration-200">
+                        <div class="flex items-center">
+                            <div class="nav-icon w-10 h-10 flex items-center justify-center rounded-lg mr-3 transition-all duration-200">
+                                <i class="fas fa-cog text-lg"></i>
+                            </div>
+                            <span class="nav-text font-medium">System Config</span>
                         </div>
+                        <i class="fas fa-chevron-down text-sm transition-transform duration-200 nav-dropdown-icon" id="configDropdownIcon"></i>
+                    </button>
+
+                    <!-- Dropdown Content -->
+                    <div id="configDropdown" class="nav-dropdown-content ml-6 mt-1 space-y-1 {{ request()->routeIs('config.*') ? '' : 'hidden' }}">
+                        <a href="{{ route('config.amenities.index') }}" class="nav-sub-item {{ request()->routeIs('config.amenities.*') ? 'active' : '' }} group flex items-center px-4 py-2 rounded-lg text-sm transition-all duration-200">
+                            <div class="nav-sub-icon w-8 h-8 flex items-center justify-center rounded-lg mr-3 transition-all duration-200">
+                                <i class="fas fa-star text-sm"></i>
+                            </div>
+                            <span class="nav-text font-medium">Hostel Amenities</span>
+                        </a>
+                        <a href="{{ route('config.smtp-settings') }}" class="nav-sub-item {{ request()->routeIs('config.smtp-settings*') ? 'active' : '' }} group flex items-center px-4 py-2 rounded-lg text-sm transition-all duration-200">
+                            <div class="nav-sub-icon w-8 h-8 flex items-center justify-center rounded-lg mr-3 transition-all duration-200">
+                                <i class="fas fa-envelope text-sm"></i>
+                            </div>
+                            <span class="nav-text font-medium">SMTP Settings</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -300,9 +358,9 @@
             <div id="userDropdown" class="absolute bottom-full left-0 right-0 mb-2 rounded-xl shadow-xl border hidden overflow-hidden"
                  style="background-color: var(--card-bg); border-color: var(--border-color);">
                 <div class="py-2">
-                    <a href="{{ route('profile.edit') }}" class="user-dropdown-item flex items-center px-4 py-3 transition-colors duration-200" 
+                    <a href="{{ route('profile.edit') }}" class="user-dropdown-item flex items-center px-4 py-3 transition-colors duration-200"
                        style="color: var(--text-primary);">
-                        <div class="w-8 h-8 rounded-lg flex items-center justify-center mr-3" 
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center mr-3"
                              style="background-color: var(--bg-secondary);">
                             <i class="fas fa-user-circle text-sm" style="color: var(--text-secondary);"></i>
                         </div>

@@ -20,6 +20,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\TenantPortalController;
 
 Route::get('/', function () {
@@ -42,6 +43,22 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit')->middleware('auth');
 Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update')->middleware('auth');
 
+// Super Admin Routes
+Route::prefix('super-admin')->name('super-admin.')->middleware(['auth', 'super.admin'])->group(function () {
+    Route::get('/dashboard', [SuperAdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/settings', [SuperAdminController::class, 'settings'])->name('settings');
+    Route::put('/settings', [SuperAdminController::class, 'updateSettings'])->name('settings.update');
+    Route::get('/users', [SuperAdminController::class, 'users'])->name('users');
+    Route::post('/users/{user}/promote', [SuperAdminController::class, 'promoteToSuperAdmin'])->name('users.promote');
+    Route::post('/users/{user}/demote', [SuperAdminController::class, 'demoteFromSuperAdmin'])->name('users.demote');
+    Route::post('/users/create', [SuperAdminController::class, 'createSuperAdmin'])->name('users.create');
+    Route::get('/system-health', [SuperAdminController::class, 'systemHealth'])->name('system-health');
+    Route::post('/clear-cache', [SuperAdminController::class, 'clearCache'])->name('clear-cache');
+    Route::post('/clear-config', [SuperAdminController::class, 'clearConfig'])->name('clear-config');
+    Route::post('/clear-routes', [SuperAdminController::class, 'clearRoutes'])->name('clear-routes');
+    Route::post('/clear-views', [SuperAdminController::class, 'clearViews'])->name('clear-views');
+});
+
 // Tenant Routes
 Route::get('/tenants/available-beds/{hostel}', [TenantController::class, 'getAvailableBeds'])->name('tenants.available-beds')->middleware('auth');
 Route::get('/tenants/available-beds-new/{hostel}', [TenantController::class, 'getAvailableBedsNew'])->name('tenants.available-beds-new')->middleware('auth');
@@ -50,7 +67,7 @@ Route::post('/tenants/{tenant}/move-out', [TenantController::class, 'moveOut'])-
 Route::resource('tenants', TenantController::class)->middleware('auth');
 
 // Hostel Routes
-Route::resource('hostels', HostelController::class)->middleware('auth');
+Route::resource('hostels', HostelController::class)->middleware(['auth', 'system.limits:hostels']);
 
 // Configuration Routes
 Route::prefix('config')->name('config.')->middleware('auth')->group(function () {
@@ -113,7 +130,7 @@ Route::post('payments/{payment}/verify', [PaymentController::class, 'verify'])->
 Route::post('payments/bulk-action', [PaymentController::class, 'bulkAction'])->name('payments.bulk-action')->middleware('auth');
 
 // Room Routes (Authentication Required)
-Route::resource('rooms', RoomController::class)->middleware('auth');
+Route::resource('rooms', RoomController::class)->middleware(['auth', 'system.limits:rooms']);
 
 // Map Routes (Authentication Required)
 Route::prefix('map')->name('map.')->middleware('auth')->group(function () {

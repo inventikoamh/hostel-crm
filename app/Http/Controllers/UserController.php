@@ -16,7 +16,7 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $query = User::with('roles')->systemUsers(); // Only show system users, not tenants
+        $query = User::with('roles')->systemUsers()->visibleTo(auth()->user()); // Only show system users, not tenants, and hide super admins from non-super admins
 
         // Search functionality
         if ($request->filled('search')) {

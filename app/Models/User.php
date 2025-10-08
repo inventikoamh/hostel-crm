@@ -28,6 +28,7 @@ class User extends Authenticatable
         'status',
         'avatar',
         'is_tenant',
+        'is_super_admin',
     ];
 
     /**
@@ -52,6 +53,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'last_login_at' => 'datetime',
             'is_tenant' => 'boolean',
+            'is_super_admin' => 'boolean',
         ];
     }
 
@@ -184,5 +186,31 @@ class User extends Authenticatable
     public function scopeSystemUsers($query)
     {
         return $query->where('is_tenant', false);
+    }
+
+    // Super Admin Methods
+    public function isSuperAdmin(): bool
+    {
+        return $this->is_super_admin;
+    }
+
+    public function scopeSuperAdmins($query)
+    {
+        return $query->where('is_super_admin', true);
+    }
+
+    public function scopeNonSuperAdmins($query)
+    {
+        return $query->where('is_super_admin', false);
+    }
+
+    // Hide super admin users from regular users
+    public function scopeVisibleTo($query, User $user)
+    {
+        if ($user->isSuperAdmin()) {
+            return $query; // Super admins can see everyone
+        }
+        
+        return $query->where('is_super_admin', false); // Regular users can't see super admins
     }
 }
