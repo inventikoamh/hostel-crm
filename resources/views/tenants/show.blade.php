@@ -11,9 +11,60 @@
 @endphp
 
 @section('content')
+    @if(session('success'))
+        <div id="toast-success" class="fixed top-4 right-4 z-50 max-w-sm w-full shadow-lg rounded-lg border p-4 flex items-start gap-3"
+             style="background-color: var(--card-bg); border-color: var(--border-color);">
+            <div class="w-8 h-8 flex items-center justify-center rounded-full bg-green-100 text-green-700">
+                <i class="fas fa-check"></i>
+            </div>
+            <div class="flex-1">
+                <p class="text-sm font-semibold" style="color: var(--text-primary);">Success</p>
+                <p class="text-xs mt-1" style="color: var(--text-secondary);">{{ session('success') }}</p>
+            </div>
+            <button type="button" onclick="document.getElementById('toast-success').remove()" class="ml-2 text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        @push('scripts')
+            <script>
+                setTimeout(function () {
+                    const t = document.getElementById('toast-success');
+                    if (t) t.remove();
+                }, 3500);
+            </script>
+        @endpush
+    @endif
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Main Content -->
         <div class="lg:col-span-2 space-y-6">
+            <!-- Security: Update Password -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6" style="background-color: var(--card-bg); border-color: var(--border-color);">
+                <h3 class="text-lg font-semibold mb-4" style="color: var(--text-primary);">Security</h3>
+                <form method="POST" action="{{ route('tenants.update-password', $tenant->id) }}" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    @csrf
+                    @method('PUT')
+                    <div>
+                        <label for="password" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">New Password</label>
+                        <input type="password" id="password" name="password" required
+                               class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                               style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);">
+                        @error('password')
+                            <p class="text-red-600 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div>
+                        <label for="password_confirmation" class="block text-sm font-medium mb-2" style="color: var(--text-secondary);">Confirm New Password</label>
+                        <input type="password" id="password_confirmation" name="password_confirmation" required
+                               class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                               style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-primary);">
+                    </div>
+                    <div class="md:col-span-2 flex justify-end">
+                        <button type="submit" class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors duration-200">
+                            Update Password
+                        </button>
+                    </div>
+                </form>
+            </div>
             <!-- Basic Information -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6" style="background-color: var(--card-bg); border-color: var(--border-color);">
                 <div class="flex items-center justify-between mb-4">

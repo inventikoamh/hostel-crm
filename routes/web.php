@@ -66,6 +66,7 @@ Route::get('/tenants/available-beds-new/{hostel}', [TenantController::class, 'ge
 Route::post('/tenants/{tenant}/verify', [TenantController::class, 'verify'])->name('tenants.verify')->middleware('auth');
 Route::post('/tenants/{tenant}/move-out', [TenantController::class, 'moveOut'])->name('tenants.move-out')->middleware('auth');
 Route::resource('tenants', TenantController::class)->middleware('auth');
+Route::put('/tenants/{tenant}/password', [TenantController::class, 'updatePassword'])->name('tenants.update-password')->middleware('auth');
 
 // Hostel Routes
 Route::resource('hostels', HostelController::class)->middleware(['auth', 'system.limits:hostels']);
@@ -96,6 +97,9 @@ Route::prefix('tenant-amenities')->name('tenant-amenities.')->middleware('auth')
     // Usage management - specific routes before parameterized routes
     Route::put('/usage/{usage}', [TenantAmenityController::class, 'updateUsage'])->name('update-usage');
     Route::delete('/usage/{usage}', [TenantAmenityController::class, 'deleteUsage'])->name('delete-usage');
+
+    // Status update - specific route before parameterized routes
+    Route::put('/{tenantAmenity}/status', [TenantAmenityController::class, 'updateStatus'])->name('update-status');
 
     // Parameterized routes - these should come last
     Route::get('/{tenantAmenity}', [TenantAmenityController::class, 'show'])->name('show');

@@ -94,6 +94,9 @@ GET    /tenant-amenities/{id}/edit       → edit (show edit form)
 PUT    /tenant-amenities/{id}            → update (update subscription)
 DELETE /tenant-amenities/{id}            → destroy (delete subscription)
 
+// Status Management
+PUT    /tenant-amenities/{id}/status     → updateStatus (AJAX status update)
+
 // Special Features
 GET    /tenant-amenities/billing-summary/{tenant} → getBillingSummary
 POST   /tenant-amenities/{id}/usage      → recordUsage
@@ -146,6 +149,13 @@ DELETE /tenant-amenities/usage/{usage}  → deleteUsage
 - **Returns**: JSON with usage and billing data
 - **Features**: Current month summary, pending charges
 - **Usage**: AJAX endpoint for dynamic loading
+
+##### `updateStatus(Request $request, TenantAmenity $tenantAmenity)`
+- **Purpose**: Update status of tenant amenity subscription
+- **Method**: AJAX endpoint for real-time status updates
+- **Validation**: Server-side validation for status values
+- **Response**: JSON with success/error status and updated data
+- **Features**: Real-time updates without page refresh
 
 ## Models
 
@@ -222,10 +232,13 @@ resources/views/paid-amenities/
 └── show.blade.php       → View amenity details
 
 resources/views/tenant-amenities/
-├── index.blade.php      → Tenant subscriptions listing
+├── index.blade.php      → Tenant subscriptions listing with status updates
 ├── create.blade.php     → Create subscription form
-├── edit.blade.php       → Edit subscription form
-└── show.blade.php       → View subscription details
+├── edit.blade.php       → Edit subscription form with tenant details
+└── show.blade.php       → View subscription details with tenant information
+
+resources/views/components/
+└── status-update-dropdown.blade.php → Reusable status update component
 ```
 
 ### Key Features
@@ -238,10 +251,15 @@ resources/views/tenant-amenities/
 - **Search**: Find services by name or description
 
 #### Tenant Amenities Management
-- **Subscription Overview**: All tenant subscriptions
+- **Subscription Overview**: All tenant subscriptions with real-time status updates
 - **Quick Assignment**: Fast amenity assignment to tenants
+- **Status Management**: Real-time status updates via dropdown (Active, Inactive, Suspended, Pending)
+- **Tenant Details**: Comprehensive tenant information display on show and edit pages
 - **Usage Summary**: Current usage and billing status
 - **Billing Integration**: Link to invoices and payments
+- **AJAX Updates**: Seamless status updates without page refresh
+- **Visual Feedback**: Toast notifications and loading states
+- **Error Handling**: Graceful failure recovery with user feedback
 
 ## Integration Points
 
@@ -250,6 +268,9 @@ resources/views/tenant-amenities/
 - **Bed Assignment**: Considers room and bed location
 - **Billing Address**: Uses tenant billing information
 - **Communication**: Notification preferences
+- **Tenant Details Display**: Comprehensive tenant information on show and edit pages
+- **Quick Navigation**: Direct links to full tenant profiles
+- **Context Awareness**: Service assignments show associated tenant details
 
 ### With Usage Tracking
 - **Daily Recording**: Track actual service usage
@@ -314,6 +335,21 @@ resources/views/tenant-amenities/
 ]
 ```
 
+## Components
+
+### Status Update Dropdown
+- **File**: `resources/views/components/status-update-dropdown.blade.php`
+- **Purpose**: Reusable component for real-time status updates
+- **Features**: Status badge display with dropdown for updates
+- **Usage**: Used in data tables and detail views
+- **Props**: `status`, `tenantAmenityId`, `class`
+
+### Data Integration
+- **Flexible Data Handling**: Supports both array and string status values
+- **AJAX Integration**: Built-in JavaScript for status updates
+- **Error Handling**: Graceful failure recovery
+- **Visual Feedback**: Loading states and success notifications
+
 ## API Endpoints
 
 ### Service Management
@@ -332,6 +368,7 @@ POST   /api/tenant-amenities            → Create subscription
 GET    /api/tenant-amenities/{id}       → Get subscription details
 PUT    /api/tenant-amenities/{id}       → Update subscription
 DELETE /api/tenant-amenities/{id}       → Cancel subscription
+PUT    /api/tenant-amenities/{id}/status → Update status (AJAX)
 ```
 
 ## Security & Validation
@@ -362,6 +399,29 @@ DELETE /api/tenant-amenities/{id}       → Cancel subscription
 - **Lazy Loading**: Load data as needed
 - **Caching**: Browser caching for static data
 
+## Status Management
+
+### Real-time Status Updates
+The tenant amenities module includes comprehensive status management functionality:
+
+#### Status Options
+- **Active**: Service is currently active and being billed
+- **Inactive**: Service is temporarily disabled
+- **Suspended**: Service is suspended (may have different billing implications)
+- **Pending**: Service is awaiting activation or approval
+
+#### Update Methods
+1. **Table View**: Quick status updates directly from the main listing
+2. **Detail View**: Status updates from individual subscription pages
+3. **Edit Form**: Full status management with additional options
+
+#### Technical Features
+- **AJAX Updates**: Real-time status changes without page refresh
+- **Visual Feedback**: Toast notifications for success/error states
+- **Loading States**: Disabled controls during updates
+- **Error Recovery**: Automatic revert on failure
+- **CSRF Protection**: Secure token-based requests
+
 ## Usage Examples
 
 ### Creating a New Service
@@ -385,6 +445,24 @@ DELETE /api/tenant-amenities/{id}       → Cancel subscription
 3. Edit pricing or dates as needed
 4. Suspend or cancel services when required
 5. Track usage and billing status
+
+### Updating Service Status
+1. **From Table View**:
+   - Locate the subscription in the tenant services list
+   - Use the status dropdown in the status column
+   - Select new status (Active, Inactive, Suspended, Pending)
+   - Status updates immediately with visual feedback
+
+2. **From Detail View**:
+   - Navigate to the specific subscription details page
+   - Use the status dropdown next to the status badge
+   - Select new status from the dropdown
+   - Receive toast notification confirming the update
+
+3. **From Edit Form**:
+   - Access the edit form for the subscription
+   - Change the status in the status dropdown
+   - Save changes to apply the new status
 
 ## Troubleshooting
 

@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\TenantProfile;
+use App\Models\User;
 use App\Models\Bed;
 use App\Models\BedAssignment;
 use App\Models\Hostel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 
 class TenantController extends Controller
@@ -314,6 +316,23 @@ class TenantController extends Controller
         $tenant->load(['user', 'currentBed.room.hostel', 'verifiedBy', 'tenantAmenities.paidAmenity', 'invoices', 'payments', 'tenantDocuments', 'bedAssignments.bed.room.hostel']);
 
         return view('tenants.show', compact('tenant'));
+    }
+
+    /**
+     * Update tenant user's password (no current password required).
+     */
+    public function updatePassword(Request $request, TenantProfile $tenant)
+    {
+        $validated = $request->validate([
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $user = $tenant->user;
+        $user->password = Hash::make($validated['password']);
+        $user->save();
+
+        return redirect()->route('tenants.show', $tenant->id)
+            ->with('success', 'Password updated successfully.');
     }
 
     /**
