@@ -1,0 +1,1544 @@
+{
+    "designSystem": {
+      "name": "Modern Landing Page Design System",
+      "version": "1.0",
+      "overview": "A comprehensive, reusable design system for creating modern SaaS and product landing pages with high conversion potential",
+      
+      "colorSystem": {
+        "structure": {
+          "primary": {
+            "description": "Main brand color used for CTAs, links, and key interactive elements",
+            "usage": ["Primary buttons", "Active states", "Key highlights", "Brand elements"],
+            "variations": ["base", "light (+20% lightness)", "dark (-20% lightness)"]
+          },
+          "secondary": {
+            "description": "Supporting brand color for accents and variety",
+            "usage": ["Secondary buttons", "Feature cards", "Decorative elements", "Section backgrounds"],
+            "variations": ["base", "light", "dark"]
+          },
+          "accent": {
+            "description": "1-2 additional colors for visual variety and emphasis",
+            "usage": ["Category tags", "Stat highlights", "Alert messages", "Special sections"],
+            "count": "2-3 accent colors maximum"
+          },
+          "neutral": {
+            "background": {
+              "light": "Primary background (white or off-white)",
+              "medium": "Secondary sections (light gray or tinted)",
+              "dark": "Footer and contrast sections (dark navy/charcoal)"
+            },
+            "text": {
+              "primary": "Main content text (high contrast)",
+              "secondary": "Supporting text (medium contrast)",
+              "tertiary": "Metadata and labels (lower contrast)"
+            }
+          }
+        },
+        "selectionGuidance": {
+          "rules": [
+            "Choose 1 primary color that represents brand energy",
+            "Select 1-2 complementary or analogous secondary colors",
+            "Ensure 60-30-10 rule: 60% neutral, 30% primary, 10% accent",
+            "Test all colors for WCAG AA contrast compliance",
+            "Create light and dark variations for each brand color"
+          ]
+        }
+      },
+  
+      "typography": {
+        "scale": {
+          "display": {
+            "size": "clamp(2rem, 4vw, 3rem)",
+            "weight": "700-800",
+            "lineHeight": "1.1-1.2",
+            "usage": "Hero headlines, major page titles"
+          },
+          "h1": {
+            "size": "clamp(1.75rem, 3.5vw, 2.5rem)",
+            "weight": "700-800",
+            "lineHeight": "1.2-1.3",
+            "usage": "Section headers, primary headlines"
+          },
+          "h2": {
+            "size": "clamp(1.25rem, 2.5vw, 1.75rem)",
+            "weight": "600-700",
+            "lineHeight": "1.3-1.4",
+            "usage": "Subsection headers, feature titles"
+          },
+          "h3": {
+            "size": "clamp(1.125rem, 2vw, 1.5rem)",
+            "weight": "600",
+            "lineHeight": "1.4",
+            "usage": "Card titles, smaller section headers"
+          },
+          "body-large": {
+            "size": "1rem-1.125rem",
+            "weight": "400",
+            "lineHeight": "1.6-1.7",
+            "usage": "Hero subtext, important descriptions"
+          },
+          "body": {
+            "size": "0.9375rem",
+            "weight": "400",
+            "lineHeight": "1.6-1.7",
+            "usage": "Standard paragraph text, descriptions"
+          },
+          "body-small": {
+            "size": "0.8125rem-0.875rem",
+            "weight": "400",
+            "lineHeight": "1.5-1.6",
+            "usage": "Captions, metadata, fine print"
+          },
+          "label": {
+            "size": "0.6875rem-0.75rem",
+            "weight": "500-600",
+            "letterSpacing": "0.05em (optional)",
+            "textTransform": "uppercase (optional)",
+            "usage": "Buttons, tags, form labels"
+          }
+        },
+        "fontPairing": {
+          "option1": "Single modern sans-serif (Inter, Poppins, DM Sans, Outfit)",
+          "option2": "Serif headings + Sans-serif body (Playfair/Merriweather + Inter)",
+          "option3": "Geometric sans + Humanist sans (Montserrat headings + Open Sans body)",
+          "recommendation": "Use 1-2 font families maximum, vary with weight and size"
+        }
+      },
+  
+      "layoutArchitecture": {
+        "grid": {
+          "columns": 12,
+          "maxWidth": "1280px-1440px",
+          "containerPadding": {
+            "mobile": "16px-24px",
+            "tablet": "32px-48px",
+            "desktop": "48px-80px"
+          },
+          "columnGap": "20px-32px",
+          "rowGap": "40px-80px"
+        },
+        
+        "sectionStructure": [
+          {
+            "name": "Navigation Header",
+            "layout": "3-column grid: Logo | Menu | CTA",
+            "height": "64px-80px",
+            "position": "Sticky or fixed",
+            "background": "Transparent with blur on scroll, or solid",
+            "elements": ["Brand logo (left)", "Navigation links (center)", "CTA button (right)", "Mobile menu toggle"]
+          },
+          {
+            "name": "Hero Section",
+            "layouts": [
+              {
+                "type": "Split Layout",
+                "structure": "Text 50% | Visual 50%",
+                "textSide": "Left or Right",
+                "visualType": "Product mockup, illustration, or abstract"
+              },
+              {
+                "type": "Centered Layout",
+                "structure": "Text centered, visual below",
+                "width": "60-80% of container"
+              },
+              {
+                "type": "Full-Width Background",
+                "structure": "Text overlay on image/video",
+                "overlay": "Dark gradient for readability"
+              }
+            ],
+            "elements": [
+              "Compelling headline (benefit-focused)",
+              "Supporting subtext (1-2 sentences)",
+              "Primary CTA button",
+              "Secondary CTA (optional)",
+              "Trust indicators (logos, ratings, user count)",
+              "Hero visual"
+            ],
+            "spacing": {
+              "paddingTop": "120px-160px (accounts for header)",
+              "paddingBottom": "80px-120px"
+            }
+          },
+          {
+            "name": "Social Proof Bar",
+            "layout": "Horizontal row of logos or single stat line",
+            "background": "Contrasting color (often dark)",
+            "height": "80px-120px",
+            "elements": ["Client logos", "Key metrics", "Awards or certifications"]
+          },
+          {
+            "name": "Features/Benefits Section",
+            "layouts": [
+              {
+                "type": "Grid Layout",
+                "columns": "2-4 columns",
+                "cardCount": "3, 4, 6, or 8 cards",
+                "responsive": "Stack on mobile"
+              },
+              {
+                "type": "Alternating Layout",
+                "structure": "Image left/text right, then flip",
+                "usage": "Detailed feature explanations"
+              },
+              {
+                "type": "Centered Cards",
+                "structure": "Icon top, text below, centered",
+                "columns": "3 columns typically"
+              }
+            ],
+            "elements": [
+              "Section headline",
+              "Optional section description",
+              "Feature cards (icon + title + description)",
+              "Optional CTA at end"
+            ]
+          },
+          {
+            "name": "How It Works / Process Section",
+            "layout": "Horizontal timeline or numbered steps",
+            "structure": "3-5 step cards with connectors",
+            "elements": ["Step number", "Icon", "Title", "Description", "Connecting lines/arrows"]
+          },
+          {
+            "name": "Showcase / Product Details",
+            "layout": "Large visual with feature callouts or tabs",
+            "structure": "60% visual | 40% text or full-width with overlays",
+            "elements": ["Product screenshot/demo", "Feature highlights", "Annotations", "Video option"]
+          },
+          {
+            "name": "Statistics / Results Section",
+            "layout": "2-4 column grid or horizontal row",
+            "style": "Large numbers with labels",
+            "background": "Accent color or contrasting section",
+            "elements": ["Large number", "Metric label", "Supporting description"]
+          },
+          {
+            "name": "Testimonials / Reviews",
+            "layouts": [
+              {
+                "type": "Carousel",
+                "structure": "Single testimonial with navigation",
+                "cardStyle": "Quote + photo + name + title"
+              },
+              {
+                "type": "Grid",
+                "structure": "Multiple testimonials visible",
+                "columns": "2-3 columns"
+              },
+              {
+                "type": "Featured",
+                "structure": "One large testimonial with emphasis"
+              }
+            ],
+            "elements": ["Quote text", "Customer photo", "Name", "Title/Company", "Rating (optional)", "Logo (optional)"]
+          },
+          {
+            "name": "Pricing Section",
+            "layout": "3-column card grid (typical tiers)",
+            "structure": "Basic | Popular (highlighted) | Enterprise",
+            "elements": [
+              "Tier name",
+              "Price (large)",
+              "Billing period",
+              "Feature list",
+              "CTA button",
+              "Popular badge"
+            ],
+            "spacing": "Center card elevated or highlighted"
+          },
+          {
+            "name": "FAQ Section",
+            "layout": "Single column or 2-column",
+            "structure": "Accordion/expandable items",
+            "width": "60-80% of container, centered",
+            "elements": ["Question (bold)", "Answer (expandable)", "Expand/collapse icon"]
+          },
+          {
+            "name": "Final CTA Section",
+            "layout": "Centered or split",
+            "background": "Accent color or gradient",
+            "elements": [
+              "Compelling headline",
+              "Brief supporting text",
+              "Large CTA button",
+              "Trust element (money-back, free trial, etc.)"
+            ],
+            "spacing": "80px-120px vertical padding"
+          },
+          {
+            "name": "Footer",
+            "layout": "Multi-column grid (4-5 columns)",
+            "background": "Dark color",
+            "structure": "Company info | Products | Resources | Legal | Newsletter",
+            "elements": [
+              "Logo and tagline",
+              "Navigation links by category",
+              "Social media icons",
+              "Newsletter signup",
+              "Copyright and legal links"
+            ]
+          }
+        ],
+  
+        "spacing": {
+          "sections": {
+            "default": "60px-80px vertical padding",
+            "compact": "40px-60px (mobile or tight layouts)",
+            "spacious": "80px-100px (important sections)"
+          },
+          "elements": {
+            "headlineToSubtext": "12px-18px",
+            "textToCTA": "24px-32px",
+            "cardGap": "16px-24px",
+            "paragraphGap": "12px-18px"
+          }
+        }
+      },
+  
+      "componentLibrary": {
+        "buttons": {
+          "primary": {
+            "background": "Primary brand color",
+            "text": "White or contrasting color",
+            "padding": "12px-20px horizontal, 10px-16px vertical",
+            "borderRadius": "6px-12px (modern) or 24px-32px (pill)",
+            "fontSize": "0.9375rem-1.125rem",
+            "fontWeight": "500-600",
+            "icon": "Optional (arrow, chevron, external link)",
+            "hover": "Darken 10% or scale(1.05)",
+            "transition": "all 0.2s-0.3s ease",
+            "minWidth": "120px-160px for important CTAs"
+          },
+          "secondary": {
+            "background": "Transparent or neutral light",
+            "border": "1px-2px solid primary or neutral",
+            "text": "Primary color or dark text",
+            "style": "Similar padding and shape to primary",
+            "hover": "Background fill with light primary"
+          },
+          "tertiary": {
+            "background": "None",
+            "text": "Primary color",
+            "underline": "On hover",
+            "padding": "Minimal",
+            "usage": "Text links, less important actions"
+          },
+          "sizes": {
+            "small": "padding: 8px-12px, fontSize: 0.875rem",
+            "medium": "padding: 12px-20px, fontSize: 1rem",
+            "large": "padding: 16px-32px, fontSize: 1.125rem"
+          }
+        },
+  
+        "cards": {
+          "base": {
+            "background": "White or slight tint",
+            "border": "1px solid neutral-200 or none",
+            "borderRadius": "12px-20px",
+            "padding": "24px-40px",
+            "shadow": "0 4px 6px rgba(0,0,0,0.05) or elevation system",
+            "hover": "shadow increase or lift (translateY(-4px))",
+            "transition": "all 0.3s ease"
+          },
+          "featureCard": {
+            "structure": [
+              "Icon container (top)",
+              "Title (h3)",
+              "Description text",
+              "Optional link/button"
+            ],
+            "iconStyle": "Line icons or filled, 32px-48px size",
+            "iconBackground": "Light tint of brand color or accent",
+            "iconShape": "Circle, rounded square, or none",
+            "alignment": "Left-aligned or centered"
+          },
+          "testimonialCard": {
+            "structure": [
+              "Quote marks (optional)",
+              "Testimonial text",
+              "Customer info section (photo + name + title)",
+              "Rating (optional)"
+            ],
+            "quoteStyle": "Serif font or italic (optional)",
+            "photoShape": "Circle (48px-64px diameter)",
+            "background": "White or light tint"
+          },
+          "pricingCard": {
+            "structure": [
+              "Badge (if featured/popular)",
+              "Tier name",
+              "Price (large) + period",
+              "Feature list (checkmarks)",
+              "CTA button",
+              "Fine print"
+            ],
+            "featuredStyle": "Elevated, border highlight, or scale slightly larger",
+            "alignment": "Centered",
+            "listStyle": "Checkmark icons + text"
+          }
+        },
+  
+        "forms": {
+          "input": {
+            "height": "44px-52px",
+            "padding": "12px-16px",
+            "borderRadius": "6px-10px",
+            "border": "1px solid neutral-300",
+            "background": "White",
+            "fontSize": "1rem",
+            "focusState": "Border color changes to primary, outline glow",
+            "placeholderColor": "neutral-400"
+          },
+          "label": {
+            "position": "Above input",
+            "fontSize": "0.875rem-0.9375rem",
+            "fontWeight": "500-600",
+            "marginBottom": "6px-8px",
+            "color": "neutral-700"
+          },
+          "errorState": {
+            "borderColor": "red-500",
+            "textColor": "red-600",
+            "icon": "Alert icon",
+            "message": "Below input, small font"
+          },
+          "layout": {
+            "vertical": "Stack all fields",
+            "horizontal": "Side-by-side for related fields (first name | last name)",
+            "inlineEmail": "Email + button in single row (newsletter)"
+          }
+        },
+  
+        "navigation": {
+          "desktop": {
+            "layout": "Horizontal list, centered or right-aligned",
+            "itemSpacing": "24px-40px",
+            "fontSize": "0.9375rem-1rem",
+            "fontWeight": "400-500",
+            "hover": "Underline, color change, or subtle background",
+            "activeState": "Underline or dot indicator"
+          },
+          "mobile": {
+            "trigger": "Hamburger icon (24px)",
+            "style": "Slide-in drawer or dropdown",
+            "layout": "Vertical stack, full-width items",
+            "overlay": "Semi-transparent background",
+            "itemPadding": "16px-20px vertical"
+          },
+          "dropdown": {
+            "trigger": "Chevron down icon",
+            "style": "Absolute positioned, shadow elevated",
+            "animation": "Fade + slide down",
+            "minWidth": "200px-240px"
+          }
+        },
+  
+        "badges": {
+          "style": {
+            "padding": "4px-10px horizontal, 2px-6px vertical",
+            "borderRadius": "4px-6px (small) or full pill",
+            "fontSize": "0.75rem-0.875rem",
+            "fontWeight": "500-600",
+            "textTransform": "uppercase (optional)"
+          },
+          "types": {
+            "new": "Accent color background",
+            "popular": "Primary color background",
+            "featured": "Secondary color background",
+            "category": "Neutral with border"
+          }
+        },
+  
+        "icons": {
+          "style": "Line icons (2px stroke) or filled",
+          "size": "16px-24px (UI), 32px-48px (features), 64px+ (hero)",
+          "source": "Lucide, Heroicons, Feather, or custom",
+          "usage": [
+            "Feature cards (illustrate concept)",
+            "Buttons (enhance CTA)",
+            "List items (checkmarks, bullets)",
+            "Social media links",
+            "Navigation (arrows, menu)"
+          ],
+          "color": "Match text color or use primary/accent"
+        },
+  
+        "images": {
+          "treatment": {
+            "borders": "Rounded corners (12px-20px) or organic shapes",
+            "shadows": "Soft elevation shadows",
+            "overlays": "Gradient overlays for text readability",
+            "frames": "Optional decorative borders or shapes"
+          },
+          "types": {
+            "hero": "High-quality product mockups or lifestyle imagery",
+            "features": "Screenshots, diagrams, illustrations",
+            "testimonials": "Professional headshots (circle crop)",
+            "background": "Subtle textures, gradients, or blurred images"
+          },
+          "aspectRatios": {
+            "hero": "16:9 or 4:3",
+            "cards": "1:1 or 4:3",
+            "testimonials": "1:1 (profile photos)",
+            "banner": "21:9 or wider"
+          },
+          "optimization": "WebP format, lazy loading, responsive images"
+        },
+  
+        "dividers": {
+          "types": [
+            "Simple line (1px solid, neutral-200)",
+            "Gradient line",
+            "Decorative wave or curve",
+            "Shape dividers between sections",
+            "None (use color/spacing contrast)"
+          ],
+          "usage": "Separate major sections or create visual breaks"
+        }
+      },
+  
+      "visualDesignPatterns": {
+        "sectionVariety": {
+          "principle": "Alternate visual treatment between sections",
+          "patterns": [
+            "Light background → Colored background → Light",
+            "Text left → Text right → Text left (alternating)",
+            "Full-width → Contained → Full-width",
+            "Image → No image → Image"
+          ]
+        },
+  
+        "hierarchy": {
+          "visual": [
+            "Size: Larger elements draw attention first",
+            "Color: Bright colors attract before muted",
+            "Contrast: High contrast elements stand out",
+            "Position: Top and center viewed first",
+            "Motion: Animated elements catch the eye"
+          ],
+          "content": [
+            "Headline → Subheadline → Body → CTA",
+            "Problem → Solution → Proof → Action",
+            "Feature → Benefit → Example → Try it"
+          ]
+        },
+  
+        "whitespace": {
+          "principle": "Use generous whitespace for breathing room",
+          "application": [
+            "Around headlines (1.5-2x line height above/below)",
+            "Between sections (80px-120px)",
+            "Around CTAs (40px-60px buffer)",
+            "Inside cards (24px-40px padding)",
+            "Line length (60-75 characters max for readability)"
+          ]
+        },
+  
+        "focal points": {
+          "strategy": "Guide user attention through page",
+          "techniques": [
+            "Size contrast (large headline vs. small text)",
+            "Color accents on CTAs",
+            "Directional cues (arrows, gaze direction)",
+            "Isolation (single element in whitespace)",
+            "Visual weight (bold vs. light)"
+          ]
+        },
+  
+        "animation": {
+          "entrance": {
+            "style": "Fade + slide up/down",
+            "timing": "0.4s-0.8s ease-out",
+            "trigger": "On scroll into view",
+            "stagger": "Delay 0.1s-0.2s between elements"
+          },
+          "interaction": {
+            "buttons": "Scale, lift, or background change",
+            "cards": "Lift with shadow increase",
+            "links": "Underline slide, color change",
+            "duration": "0.2s-0.3s"
+          },
+          "micro": {
+            "examples": [
+              "Loading spinners",
+              "Success checkmarks",
+              "Toggle switches",
+              "Number counters",
+              "Progress bars"
+            ]
+          },
+          "principles": [
+            "Keep animations subtle and purposeful",
+            "Respect prefers-reduced-motion",
+            "Use for feedback and delight, not decoration",
+            "60fps performance target"
+          ]
+        }
+      },
+  
+      "contentGuidelines": {
+        "headlines": {
+          "hero": {
+            "length": "5-12 words",
+            "focus": "Primary benefit or transformation",
+            "tone": "Bold, confident, clear",
+            "avoid": "Jargon, vague claims, questions (usually)",
+            "formulas": [
+              "[Outcome] without [pain point]",
+              "The [adjective] way to [achieve goal]",
+              "[Action verb] your way to [benefit]",
+              "[Number] ways to [achieve result]"
+            ]
+          },
+          "section": {
+            "length": "3-8 words",
+            "focus": "Section topic or benefit",
+            "style": "Clear, specific",
+            "examples": [
+              "Features that power your growth",
+              "How it works",
+              "Trusted by industry leaders",
+              "Everything you need to succeed"
+            ]
+          }
+        },
+  
+        "subtext": {
+          "hero": {
+            "length": "15-25 words (1-2 sentences)",
+            "focus": "Expand on headline, clarify value",
+            "tone": "Supportive, clear",
+            "include": "Who it's for or key differentiator"
+          },
+          "section": {
+            "length": "20-40 words",
+            "purpose": "Set up content below",
+            "optional": "Can be omitted if headline is self-explanatory"
+          }
+        },
+  
+        "featureDescriptions": {
+          "length": "50-80 words per feature",
+          "structure": "Benefit → How it works → Result",
+          "tone": "Clear, benefit-focused",
+          "avoid": "Technical jargon without explanation"
+        },
+  
+        "CTAtext": {
+          "primary": {
+            "examples": [
+              "Get started free",
+              "Start your free trial",
+              "See it in action",
+              "Request a demo",
+              "Try it now",
+              "Join [number] companies"
+            ],
+            "principles": [
+              "Action-oriented verb",
+              "Remove friction (mention free, no credit card)",
+              "Create urgency (limited, today)",
+              "Be specific"
+            ]
+          },
+          "secondary": {
+            "examples": [
+              "Learn more",
+              "Watch demo",
+              "View pricing",
+              "Contact sales",
+              "Read documentation"
+            ]
+          }
+        },
+  
+        "trustElements": {
+          "types": [
+            "Client logos (5-8 recognizable brands)",
+            "User statistics (X+ users, Y downloads)",
+            "Ratings (4.5/5 stars from Z reviews)",
+            "Awards and certifications",
+            "Media mentions (As seen in...)",
+            "Security badges (SOC 2, GDPR)",
+            "Money-back guarantee",
+            "Free trial period"
+          ],
+          "placement": [
+            "Below hero CTA",
+            "Dedicated social proof section",
+            "Near pricing",
+            "In testimonials",
+            "Footer"
+          ]
+        }
+      },
+  
+      "responsiveDesign": {
+        "breakpoints": {
+          "mobile": "320px-767px",
+          "tablet": "768px-1023px",
+          "desktop": "1024px-1439px",
+          "wide": "1440px+"
+        },
+  
+        "transformations": {
+          "mobile": {
+            "layout": [
+              "All multi-column layouts become single column",
+              "Side-by-side content stacks vertically",
+              "Navigation becomes hamburger menu",
+              "Hero text appears above image",
+              "Forms full-width, single column"
+            ],
+            "typography": [
+              "Scale down headlines (clamp function)",
+              "Maintain readable body text (16px minimum)",
+              "Reduce line length for readability"
+            ],
+            "spacing": [
+              "Reduce section padding (60px → 40px)",
+              "Reduce element gaps (40px → 24px)",
+              "Maintain tap target sizes (44px minimum)"
+            ],
+            "images": [
+              "Full-width or properly contained",
+              "Serve smaller image files",
+              "Stack image + text vertically"
+            ]
+          },
+          "tablet": {
+            "layout": [
+              "2-column grids where appropriate",
+              "Services: 2 cards per row",
+              "Testimonials: 2 cards per row",
+              "Hero can remain split or stack",
+              "Navigation stays horizontal or becomes mobile"
+            ]
+          },
+          "desktop": {
+            "layout": [
+              "Full multi-column designs",
+              "Max-width containers centered",
+              "Take advantage of horizontal space",
+              "Side-by-side content flourishes"
+            ]
+          }
+        },
+  
+        "touchTargets": {
+          "minimum": "44px × 44px",
+          "spacing": "8px minimum between interactive elements",
+          "buttons": "Full-width on mobile for primary CTAs (optional)"
+        },
+  
+        "testing": {
+          "devices": [
+            "iPhone (390px)",
+            "Android (360px)",
+            "iPad (768px)",
+            "Desktop (1280px, 1920px)"
+          ],
+          "orientations": "Both portrait and landscape"
+        }
+      },
+  
+      "performance": {
+        "optimization": [
+          "Lazy load images below the fold",
+          "Use WebP with fallbacks",
+          "Implement critical CSS",
+          "Defer non-essential JavaScript",
+          "Minimize font files (2 weights max)",
+          "Use system fonts for speed (optional)",
+          "Compress all assets",
+          "Implement CDN for static assets",
+          "Optimize hero image especially"
+        ],
+        "metrics": {
+          "targetLCP": "< 2.5s",
+          "targetFID": "< 100ms",
+          "targetCLS": "< 0.1",
+          "targetPageSize": "< 1MB initial load"
+        }
+      },
+  
+      "accessibility": {
+        "requirements": [
+          "WCAG 2.1 AA compliance minimum",
+          "Color contrast 4.5:1 for text, 3:1 for large text",
+          "Semantic HTML (header, nav, main, section, footer)",
+          "Proper heading hierarchy (single h1, logical nesting)",
+          "Alt text for all meaningful images",
+          "Focus indicators visible on all interactive elements",
+          "Keyboard navigation for all functionality",
+          "Form labels associated with inputs",
+          "ARIA labels where semantic HTML insufficient",
+          "Skip navigation link",
+          "Responsive text (no images of text)",
+          "Support prefers-reduced-motion",
+          "Sufficient link text (no 'click here')",
+          "Logical tab order"
+        ],
+        "testing": [
+          "Keyboard-only navigation",
+          "Screen reader testing (NVDA, JAWS, VoiceOver)",
+          "Color contrast tools (WebAIM, axe)",
+          "Automated testing (axe-core, Lighthouse)",
+          "Manual code review"
+        ]
+      },
+  
+      "conversionOptimization": {
+        "principles": [
+          "Clear value proposition above the fold",
+          "Single primary CTA per section",
+          "Reduce friction (free trials, no credit card)",
+          "Build trust early and often",
+          "Create urgency without pressure",
+          "Show, don't just tell (demos, screenshots)",
+          "Address objections preemptively",
+          "Make CTA buttons prominent",
+          "Use directional cues toward CTAs",
+          "Optimize page load speed",
+          "Mobile-first design approach"
+        ],
+  
+        "ctaPlacement": [
+          "Hero section (primary position)",
+          "After feature explanations",
+          "After testimonials/social proof",
+          "After pricing",
+          "Final section before footer",
+          "Sticky header (optional)"
+        ],
+  
+        "psychology": {
+          "scarcity": "Limited time offer, spots remaining",
+          "authority": "Awards, certifications, expert endorsements",
+          "social proof": "User counts, testimonials, ratings",
+          "reciprocity": "Free trials, free resources, free tools",
+          "commitment": "Small asks first (email) before big asks (purchase)",
+          "clarity": "Remove ambiguity, be specific about outcomes"
+        }
+      },
+  
+      "implementationFramework": {
+        "technology": {
+          "htmlStructure": "Semantic HTML5 elements",
+          "cssApproach": [
+            "Utility-first (Tailwind CSS)",
+            "Component-based (CSS Modules, Styled Components)",
+            "BEM methodology",
+            "Modern CSS (Grid, Flexbox, Custom Properties)"
+          ],
+          "javascript": [
+            "Vanilla JS for simple interactions",
+            "React for complex applications",
+            "Vue or Svelte alternatives",
+            "Intersection Observer for scroll animations",
+            "Libraries: Framer Motion, GSAP (animation)"
+          ]
+        },
+  
+        "fileStructure": {
+          "components": [
+            "Header/Navigation",
+            "Hero",
+            "Feature cards",
+            "Testimonial cards",
+            "Pricing cards",
+            "FAQ accordion",
+            "CTA section",
+            "Footer",
+            "Button variants",
+            "Form inputs"
+          ],
+          "organization": "Component-based architecture, reusable modules"
+        },
+  
+        "buildProcess": {
+          "development": [
+            "Component library/design system first",
+            "Mobile-first development",
+            "Progressive enhancement",
+            "Accessibility testing throughout"
+          ],
+          "deployment": [
+            "Optimize assets",
+            "Minify CSS/JS",
+            "Compress images",
+            "Set up CDN",
+            "Implement caching",
+            "SSL certificate",
+            "Analytics integration"
+          ]
+        }
+      },
+  
+      "usageInstructions": {
+        "forAI": [
+          "Start by defining the brand colors (primary, secondary, accent, neutrals)",
+          "Choose typography scale appropriate to brand personality",
+          "Select 5-8 key sections from layoutArchitecture based on product needs",
+          "Use componentLibrary specifications to build consistent UI elements",
+          "Apply visualDesignPatterns for professional aesthetic",
+          "Follow contentGuidelines for compelling copy",
+          "Ensure responsiveDesign transformations for all screen sizes",
+          "Implement accessibility requirements from the start",
+          "Reference conversionOptimization for strategic decisions",
+          "Customize but maintain internal consistency"
+        ],
+        
+        "adaptationGuidance": [
+        "This system is a foundation - adapt based on brand personality",
+        "Conservative brands: Use subtle colors, more whitespace, serif fonts",
+        "Tech/Modern brands: Bold colors, geometric shapes, sans-serif fonts",
+        "Creative brands: Asymmetric layouts, vibrant colors, unique typography",
+        "Enterprise/B2B: Professional tone, data-focused, trust indicators",
+        "Consumer/B2C: Emotional appeal, lifestyle imagery, simpler language",
+        "Not all sections required - choose based on product complexity",
+        "Maintain 60-30-10 color rule regardless of brand colors chosen",
+        "Keep hierarchy principles even when styling changes",
+        "Consistency matters more than following every specification exactly"
+      ],
+
+      "quickStart": {
+        "step1": "Define brand identity (colors, fonts, personality)",
+        "step2": "Map content needs to section types",
+        "step3": "Build component library (buttons, cards, forms)",
+        "step4": "Construct page section by section",
+        "step5": "Apply responsive behaviors",
+        "step6": "Test accessibility and performance",
+        "step7": "Optimize for conversion"
+      }
+    },
+
+    "sectionDecisionTree": {
+      "essentialSections": [
+        "Navigation header",
+        "Hero section",
+        "Features/benefits (at least 3)",
+        "CTA section",
+        "Footer"
+      ],
+      
+      "conditionalSections": {
+        "socialProofBar": {
+          "include": "Have recognizable client logos or impressive metrics",
+          "skip": "Early-stage product without notable clients"
+        },
+        "howItWorks": {
+          "include": "Product is complex or has multiple steps",
+          "skip": "Product is self-explanatory or very simple"
+        },
+        "showcase": {
+          "include": "Visual product (app, design tool, platform)",
+          "skip": "Service-based or abstract offering"
+        },
+        "statistics": {
+          "include": "Have compelling data (users, growth, results)",
+          "skip": "No meaningful metrics to share yet"
+        },
+        "testimonials": {
+          "include": "Have 3+ quality testimonials with real names",
+          "skip": "No testimonials yet (focus on other trust elements)"
+        },
+        "pricing": {
+          "include": "Clear pricing tiers, self-service product",
+          "skip": "Enterprise sales or custom pricing only"
+        },
+        "faq": {
+          "include": "Common questions exist that block conversions",
+          "skip": "Product is straightforward with no common blockers"
+        },
+        "integrations": {
+          "include": "Platform with notable integrations",
+          "skip": "Standalone product"
+        },
+        "team": {
+          "include": "Team expertise is a selling point (consulting, agency)",
+          "skip": "Product sells itself, team not relevant"
+        }
+      }
+    },
+
+    "brandPersonalityMapping": {
+      "personalities": {
+        "professional": {
+          "colors": "Navy, gray, muted blue - conservative palette",
+          "typography": "Serif headings or clean sans-serif, traditional hierarchy",
+          "spacing": "Generous whitespace, formal structure",
+          "imagery": "Corporate photography, professional settings",
+          "tone": "Authoritative, trustworthy, established",
+          "buttonStyle": "Subtle rounded corners (6px-8px)",
+          "examples": "Legal, finance, enterprise B2B"
+        },
+        "innovative": {
+          "colors": "Bright primary with electric accents, high contrast",
+          "typography": "Modern sans-serif, bold weights",
+          "spacing": "Dynamic, varied spacing",
+          "imagery": "Abstract, futuristic, technology-focused",
+          "tone": "Forward-thinking, cutting-edge, bold",
+          "buttonStyle": "Sharp or pill-shaped, gradient options",
+          "examples": "Tech startups, AI products, SaaS platforms"
+        },
+        "friendly": {
+          "colors": "Warm colors (orange, yellow, soft blue), approachable",
+          "typography": "Rounded sans-serif, medium weights",
+          "spacing": "Comfortable, inviting",
+          "imagery": "Lifestyle, people, relatable scenarios",
+          "tone": "Conversational, helpful, welcoming",
+          "buttonStyle": "Rounded (12px-16px) or pill",
+          "examples": "Consumer apps, community platforms, education"
+        },
+        "luxury": {
+          "colors": "Black, gold, deep jewel tones, minimal palette",
+          "typography": "Elegant serif, generous spacing",
+          "spacing": "Maximum whitespace, breathing room",
+          "imagery": "High-end photography, minimalist",
+          "tone": "Sophisticated, exclusive, refined",
+          "buttonStyle": "Minimal borders or subtle fills",
+          "examples": "Premium products, luxury services, high-end brands"
+        },
+        "playful": {
+          "colors": "Vibrant, multiple accent colors, gradients",
+          "typography": "Geometric or rounded sans-serif, varied sizes",
+          "spacing": "Asymmetric, dynamic",
+          "imagery": "Illustrations, animations, characters",
+          "tone": "Fun, energetic, creative",
+          "buttonStyle": "Highly rounded or custom shapes",
+          "examples": "Gaming, creative tools, youth-focused products"
+        },
+        "minimal": {
+          "colors": "Monochromatic or very limited palette",
+          "typography": "Clean sans-serif, consistent weights",
+          "spacing": "Structured, generous, zen-like",
+          "imagery": "Simple, focused, lots of negative space",
+          "tone": "Clear, focused, essential",
+          "buttonStyle": "Simple rectangles or subtle rounded",
+          "examples": "Productivity tools, design-focused products"
+        }
+      }
+    },
+
+    "industrySpecificPatterns": {
+      "saas": {
+        "prioritySections": [
+          "Hero with product demo",
+          "Features grid",
+          "How it works",
+          "Integrations",
+          "Pricing",
+          "Testimonials",
+          "FAQ"
+        ],
+        "emphasis": "Product screenshots, free trial CTAs, feature depth",
+        "trustElements": "User count, security badges, uptime guarantees"
+      },
+      "ecommerce": {
+        "prioritySections": [
+          "Hero with hero product",
+          "Product categories",
+          "Best sellers",
+          "Social proof/reviews",
+          "Shipping/returns info",
+          "Instagram/social feed"
+        ],
+        "emphasis": "Product imagery, clear pricing, easy checkout path",
+        "trustElements": "Reviews, return policy, secure payment icons"
+      },
+      "agency": {
+        "prioritySections": [
+          "Hero with portfolio highlight",
+          "Services offered",
+          "Case studies/portfolio",
+          "Process/approach",
+          "Team",
+          "Client testimonials",
+          "Contact form"
+        ],
+        "emphasis": "Portfolio work, case studies, team expertise",
+        "trustElements": "Client logos, awards, years in business"
+      },
+      "consulting": {
+        "prioritySections": [
+          "Hero with expertise statement",
+          "Problem/solution",
+          "Approach/methodology",
+          "Results/statistics",
+          "Testimonials",
+          "Lead magnet/resources",
+          "Contact/booking"
+        ],
+        "emphasis": "Authority establishment, results-driven content",
+        "trustElements": "Credentials, publications, speaking engagements"
+      },
+      "mobileApp": {
+        "prioritySections": [
+          "Hero with phone mockup",
+          "Key features (3-5)",
+          "How it works",
+          "Screenshots carousel",
+          "Ratings/reviews",
+          "Download CTAs",
+          "FAQ"
+        ],
+        "emphasis": "App store badges, in-app screenshots, mobile-first design",
+        "trustElements": "Star ratings, download count, featured placements"
+      },
+      "marketplace": {
+        "prioritySections": [
+          "Hero with search bar",
+          "How it works (buyer + seller)",
+          "Popular categories",
+          "Featured listings",
+          "Seller benefits",
+          "Trust and safety",
+          "Dual CTAs (buy + sell)"
+        ],
+        "emphasis": "Two-sided value prop, search functionality, safety",
+        "trustElements": "Transaction count, verified sellers, guarantees"
+      }
+    },
+
+    "conversionPsychologyPatterns": {
+      "aboveTheFold": {
+        "principles": [
+          "Value proposition visible without scrolling",
+          "Clear what product does in 3-5 seconds",
+          "Primary CTA immediately accessible",
+          "Trust indicator present (logo bar, rating, user count)"
+        ],
+        "testing": "View on smallest target device without scrolling"
+      },
+
+      "progressiveDisclosure": {
+        "strategy": "Reveal information as user scrolls deeper",
+        "structure": [
+          "Hero: What + Why (benefit)",
+          "Features: How it works (functionality)",
+          "Proof: Who uses it (social proof)",
+          "Pricing: What it costs (investment)",
+          "FAQ: Address concerns (objections)",
+          "CTA: Take action (conversion)"
+        ],
+        "principle": "Each section builds confidence toward conversion"
+      },
+
+      "trustBuilding": {
+        "early": [
+          "Client logos (recognizable brands)",
+          "User count or metrics",
+          "Security badges",
+          "Media mentions"
+        ],
+        "middle": [
+          "Detailed testimonials",
+          "Case studies",
+          "Product demonstrations",
+          "Feature explanations"
+        ],
+        "late": [
+          "Guarantees (money-back, uptime)",
+          "Support information",
+          "FAQ addressing objections",
+          "Risk-free trial emphasis"
+        ]
+      },
+
+      "frictionReduction": {
+        "techniques": [
+          "No credit card required (free trial)",
+          "One-click signup (social auth)",
+          "Clear pricing (no hidden fees)",
+          "Instant access (no waiting)",
+          "Short forms (minimal fields)",
+          "Progress indicators (multi-step)",
+          "Guest checkout option",
+          "Exit intent offers"
+        ]
+      },
+
+      "urgencyTactics": {
+        "ethical": [
+          "Limited time discount (real deadline)",
+          "Seasonal offers",
+          "Early bird pricing",
+          "Beta access (limited spots)",
+          "Upcoming price increase (honest)",
+          "Event-based promotions"
+        ],
+        "avoid": [
+          "Fake countdown timers",
+          "False scarcity",
+          "Pressure tactics",
+          "Misleading discounts",
+          "Dark patterns"
+        ]
+      }
+    },
+
+    "copywritingFrameworks": {
+      "heroFormulas": {
+        "beforeAfter": "[Problem state] → [Solution result]",
+        "questionAnswer": "Struggling with X? → Here's how to solve it",
+        "boldClaim": "The only [product type] that [unique benefit]",
+        "numberDriven": "Join [X] companies doing [Y] better",
+        "transformation": "From [pain point] to [desired state]",
+        "contrarian": "Forget [old way]. Try [new approach]"
+      },
+
+      "featureToBenefit": {
+        "formula": "Feature → Benefit → Outcome",
+        "example": {
+          "feature": "Real-time collaboration",
+          "benefit": "Work with your team simultaneously",
+          "outcome": "Launch projects 3x faster"
+        },
+        "application": "Always lead with benefit, feature is supporting detail"
+      },
+
+      "testimonialStructure": {
+        "effective": [
+          "Specific outcome (numbers, results)",
+          "Before/after transformation",
+          "Unexpected benefit",
+          "Comparison to alternatives",
+          "Emotional impact"
+        ],
+        "include": [
+          "Full name",
+          "Title/Company",
+          "Photo (credibility)",
+          "Optional: Company logo"
+        ],
+        "length": "2-4 sentences ideal, one powerful sentence minimum"
+      },
+
+      "ctaCopyFormulas": {
+        "actionBased": "[Verb] + [Benefit]",
+        "examples": [
+          "Start saving time",
+          "Get instant access",
+          "Try it free",
+          "See how it works",
+          "Join [number] users",
+          "Build your first [thing]",
+          "Start your free trial"
+        ],
+        "avoid": [
+          "Submit",
+          "Click here",
+          "Learn more (too vague)",
+          "Generic 'Sign up'"
+        ]
+      }
+    },
+
+    "technicalImplementation": {
+      "htmlStructure": {
+        "example": [
+          "<header> - Navigation",
+          "<main>",
+          "  <section id='hero'> - Hero section",
+          "  <section id='social-proof'> - Logo bar",
+          "  <section id='features'> - Features grid",
+          "  <section id='how-it-works'> - Process",
+          "  <section id='testimonials'> - Social proof",
+          "  <section id='pricing'> - Pricing tables",
+          "  <section id='faq'> - FAQ accordion",
+          "  <section id='cta'> - Final CTA",
+          "</main>",
+          "<footer> - Footer navigation"
+        ],
+        "attributes": [
+          "Semantic HTML5 elements",
+          "IDs for anchor linking",
+          "ARIA labels where needed",
+          "Landmark regions",
+          "Skip navigation link"
+        ]
+      },
+
+      "cssArchitecture": {
+        "approach": "Component-based with utility classes",
+        "structure": [
+          "Reset/normalize",
+          "CSS custom properties (design tokens)",
+          "Typography styles",
+          "Layout utilities (grid, flex)",
+          "Component styles",
+          "Responsive utilities",
+          "Animation utilities"
+        ],
+        "naming": "BEM or similar consistent convention",
+        "organization": "Mobile-first media queries"
+      },
+
+      "designTokens": {
+        "example": {
+          "colors": {
+            "--color-primary": "#...",
+            "--color-primary-light": "#...",
+            "--color-primary-dark": "#...",
+            "--color-secondary": "#...",
+            "--color-accent": "#...",
+            "--color-neutral-100": "#...",
+            "--color-neutral-900": "#..."
+          },
+          "spacing": {
+            "--space-xs": "0.5rem",
+            "--space-sm": "1rem",
+            "--space-md": "1.5rem",
+            "--space-lg": "2rem",
+            "--space-xl": "3rem",
+            "--space-2xl": "4rem"
+          },
+          "typography": {
+            "--font-primary": "...",
+            "--font-secondary": "...",
+            "--text-xs": "0.75rem",
+            "--text-sm": "0.875rem",
+            "--text-base": "1rem",
+            "--text-lg": "1.125rem",
+            "--text-xl": "1.25rem"
+          },
+          "borderRadius": {
+            "--radius-sm": "0.375rem",
+            "--radius-md": "0.5rem",
+            "--radius-lg": "0.75rem",
+            "--radius-full": "9999px"
+          },
+          "shadows": {
+            "--shadow-sm": "0 1px 2px 0 rgba(0,0,0,0.05)",
+            "--shadow-md": "0 4px 6px -1px rgba(0,0,0,0.1)",
+            "--shadow-lg": "0 10px 15px -3px rgba(0,0,0,0.1)"
+          }
+        }
+      },
+
+      "javascriptPatterns": {
+        "interactions": [
+          "Mobile menu toggle",
+          "Smooth scroll to sections",
+          "Scroll animations (Intersection Observer)",
+          "FAQ accordion",
+          "Form validation",
+          "Carousel/slider for testimonials",
+          "Sticky header on scroll",
+          "Modal/dialog for video or details"
+        ],
+        "libraries": {
+          "animation": "Framer Motion, GSAP, AOS",
+          "scrollEffects": "Intersection Observer API (native)",
+          "forms": "React Hook Form, Formik",
+          "validation": "Zod, Yup"
+        }
+      }
+    },
+
+    "testingChecklist": {
+      "visual": [
+        "All breakpoints render correctly",
+        "Images load and scale properly",
+        "Typography hierarchy clear at all sizes",
+        "Colors have sufficient contrast",
+        "Spacing consistent throughout",
+        "Alignment precise",
+        "No text overflow or truncation",
+        "CTA buttons prominent and clickable"
+      ],
+
+      "functional": [
+        "All links work",
+        "Forms submit correctly",
+        "Validation provides helpful errors",
+        "Navigation functions on all devices",
+        "Videos/media play properly",
+        "Animations smooth (60fps)",
+        "No console errors",
+        "Fast load times (< 3s)"
+      ],
+
+      "accessibility": [
+        "Keyboard navigation complete",
+        "Screen reader compatible",
+        "Focus indicators visible",
+        "Color contrast passes WCAG AA",
+        "Alt text on all images",
+        "Form labels associated",
+        "Heading hierarchy logical",
+        "No flashing content",
+        "Captions for video (if applicable)"
+      ],
+
+      "crossBrowser": [
+        "Chrome (latest)",
+        "Firefox (latest)",
+        "Safari (latest)",
+        "Edge (latest)",
+        "Mobile Safari (iOS)",
+        "Mobile Chrome (Android)"
+      ],
+
+      "performance": [
+        "Lighthouse score > 90",
+        "Images optimized",
+        "CSS/JS minified",
+        "Critical CSS inline",
+        "Fonts optimized",
+        "No render-blocking resources",
+        "Fast First Contentful Paint",
+        "Low Cumulative Layout Shift"
+      ],
+
+      "conversion": [
+        "Value prop clear above fold",
+        "Primary CTA visible and clickable",
+        "Forms easy to complete",
+        "Trust elements present",
+        "Mobile experience excellent",
+        "Page loads quickly",
+        "No broken user flows",
+        "Analytics tracking correctly"
+      ]
+    },
+
+    "iterationGuidelines": {
+      "analytics": {
+        "trackingPoints": [
+          "Page views",
+          "Scroll depth",
+          "Button clicks (all CTAs)",
+          "Form submissions",
+          "Form field interactions",
+          "Video plays",
+          "Exit points",
+          "Time on page"
+        ],
+        "tools": "Google Analytics, Mixpanel, Hotjar, Microsoft Clarity"
+      },
+
+      "abTesting": {
+        "testElements": [
+          "Hero headline variations",
+          "CTA button text/color",
+          "Feature order/presentation",
+          "Pricing display",
+          "Form length",
+          "Social proof placement",
+          "Image vs video in hero"
+        ],
+        "methodology": "Test one variable at a time, minimum 95% confidence"
+      },
+
+      "heatmaps": {
+        "insights": [
+          "Where users click",
+          "How far users scroll",
+          "What content gets attention",
+          "Where users get stuck",
+          "Mobile vs desktop behavior"
+        ],
+        "actions": "Optimize based on actual user behavior patterns"
+      },
+
+      "userFeedback": {
+        "methods": [
+          "User testing sessions",
+          "Feedback widgets on site",
+          "Customer interviews",
+          "Survey after interaction",
+          "Support ticket analysis",
+          "Social media monitoring"
+        ],
+        "application": "Address common confusion or friction points"
+      }
+    },
+
+    "commonMistakes": {
+      "avoid": [
+        {
+          "mistake": "Too much text above fold",
+          "fix": "Keep hero concise, move details below"
+        },
+        {
+          "mistake": "Weak or generic headlines",
+          "fix": "Lead with specific benefits, avoid jargon"
+        },
+        {
+          "mistake": "Multiple competing CTAs",
+          "fix": "One primary CTA per section"
+        },
+        {
+          "mistake": "Vague value proposition",
+          "fix": "Be specific about what user gets"
+        },
+        {
+          "mistake": "Poor mobile experience",
+          "fix": "Design mobile-first"
+        },
+        {
+          "mistake": "Slow page load",
+          "fix": "Optimize images and code"
+        },
+        {
+          "mistake": "No social proof",
+          "fix": "Add testimonials, logos, or metrics"
+        },
+        {
+          "mistake": "Hidden pricing",
+          "fix": "Be transparent about costs"
+        },
+        {
+          "mistake": "Too many form fields",
+          "fix": "Only ask for essential information"
+        },
+        {
+          "mistake": "Inconsistent design",
+          "fix": "Create and follow design system"
+        },
+        {
+          "mistake": "Ignoring accessibility",
+          "fix": "Build accessibility in from start"
+        },
+        {
+          "mistake": "Feature-focused instead of benefit-focused",
+          "fix": "Lead with outcomes, support with features"
+        }
+      ]
+    },
+
+    "deliverables": {
+      "designPhase": [
+        "Style guide (colors, typography, spacing)",
+        "Component library (buttons, cards, forms)",
+        "Mockups for all breakpoints",
+        "Prototype with interactions",
+        "Asset library (icons, images)"
+      ],
+
+      "developmentPhase": [
+        "Semantic HTML structure",
+        "Responsive CSS",
+        "Interactive JavaScript",
+        "Optimized images",
+        "Performance optimization",
+        "Accessibility implementation",
+        "Cross-browser testing",
+        "Analytics integration"
+      ],
+
+      "documentation": [
+        "Design system reference",
+        "Component usage guide",
+        "Content guidelines",
+        "Responsive behavior notes",
+        "Browser support matrix",
+        "Performance benchmarks",
+        "Maintenance instructions"
+      ]
+    }
+  }
+}
