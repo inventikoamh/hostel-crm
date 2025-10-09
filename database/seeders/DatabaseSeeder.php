@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             EnquirySeeder::class,
             PaidAmenitySeeder::class,
             AmenityUsageSeeder::class,
+            IntentSeeder::class,
         ]);
     }
 }
