@@ -42,6 +42,12 @@
                         </div>
                         <span class="nav-text font-medium">Hostels</span>
                     </a>
+                    <a href="{{ route('chat.index') }}" class="nav-item {{ request()->routeIs('chat.*') ? 'active' : '' }} group flex items-center px-4 py-3 rounded-xl transition-all duration-200">
+                        <div class="nav-icon w-10 h-10 flex items-center justify-center rounded-lg mr-3 transition-all duration-200">
+                            <i class="fas fa-comments text-lg"></i>
+                        </div>
+                        <span class="nav-text font-medium">Chat</span>
+                    </a>
                     <a href="{{ route('tenants.index') }}" class="nav-item {{ request()->routeIs('tenants.*') ? 'active' : '' }} group flex items-center px-4 py-3 rounded-xl transition-all duration-200">
                         <div class="nav-icon w-10 h-10 flex items-center justify-center rounded-lg mr-3 transition-all duration-200">
                             <i class="fas fa-users text-lg"></i>

@@ -9,11 +9,12 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -107,8 +108,8 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Permission::class, 'user_roles', 'user_id', 'role_id')
             ->join('role_permissions', 'user_roles.role_id', '=', 'role_permissions.role_id')
-            ->join('permissions', 'role_permissions.permission_id', '=', 'permissions.id')
-            ->select('permissions.*');
+            ->join('permissions as role_perms', 'role_permissions.permission_id', '=', 'role_perms.id')
+            ->select('role_perms.*');
     }
 
     // Role and Permission Helper Methods

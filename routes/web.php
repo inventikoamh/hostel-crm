@@ -23,6 +23,12 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\TenantPortalController;
 use App\Http\Controllers\LandingController;
+use App\Http\Controllers\DocumentationController;
+
+// Documentation Routes (Unauthenticated) - Must be first to avoid conflicts
+Route::get('/docs', [DocumentationController::class, 'index'])->name('docs.index');
+Route::get('/docs/{file}', [DocumentationController::class, 'show'])->name('docs.show')->where('file', '.*');
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -41,6 +47,14 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Dashboard Routes
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
+
+// Chat Routes (UI only)
+Route::get('/chat', function () {
+    return view('chat.index', [
+        'title' => 'Chat',
+        'subtitle' => 'Converse with the assistant',
+    ]);
+})->name('chat.index')->middleware('auth');
 
 // Profile Routes
 Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit')->middleware('auth');
