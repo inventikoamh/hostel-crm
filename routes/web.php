@@ -30,9 +30,7 @@ Route::get('/docs', [DocumentationController::class, 'index'])->name('docs.index
 Route::get('/docs/{file}', [DocumentationController::class, 'show'])->name('docs.show')->where('file', '.*');
 
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', [LandingController::class, 'index'])->name('home');
 
 Route::get('/landing', [LandingController::class, 'index'])->name('landing');
 
@@ -82,6 +80,7 @@ Route::get('/tenants/available-beds-new/{hostel}', [TenantController::class, 'ge
 Route::post('/tenants/{tenant}/verify', [TenantController::class, 'verify'])->name('tenants.verify')->middleware('auth');
 Route::post('/tenants/{tenant}/move-out', [TenantController::class, 'moveOut'])->name('tenants.move-out')->middleware('auth');
 Route::resource('tenants', TenantController::class)->middleware('auth');
+Route::put('/tenants/{tenant}/password', [TenantController::class, 'updatePassword'])->name('tenants.update-password')->middleware('auth');
 
 // Hostel Routes
 Route::resource('hostels', HostelController::class)->middleware(['auth', 'system.limits:hostels']);
@@ -112,6 +111,9 @@ Route::prefix('tenant-amenities')->name('tenant-amenities.')->middleware('auth')
     // Usage management - specific routes before parameterized routes
     Route::put('/usage/{usage}', [TenantAmenityController::class, 'updateUsage'])->name('update-usage');
     Route::delete('/usage/{usage}', [TenantAmenityController::class, 'deleteUsage'])->name('delete-usage');
+
+    // Status update - specific route before parameterized routes
+    Route::put('/{tenantAmenity}/status', [TenantAmenityController::class, 'updateStatus'])->name('update-status');
 
     // Parameterized routes - these should come last
     Route::get('/{tenantAmenity}', [TenantAmenityController::class, 'show'])->name('show');

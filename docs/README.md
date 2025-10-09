@@ -345,6 +345,9 @@ For a comprehensive list of recent updates, improvements, and new features, plea
 - **Enhanced Tenant Creation**: Conditional bed selection with improved user experience
 - **Availability System**: Comprehensive room and bed availability checking
 - **UI/UX Improvements**: Removed test buttons, added progressive disclosure, enhanced visual feedback
+- **Status Management**: Real-time status updates for tenant amenities with AJAX functionality
+- **Tenant Details Integration**: Comprehensive tenant information display in amenity management
+- **Enhanced User Experience**: Toast notifications, loading states, and error handling
 
 ---
 

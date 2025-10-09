@@ -372,14 +372,7 @@
                         </div>
                         <span class="text-sm font-medium">Profile</span>
                     </a>
-                    <a href="#" class="user-dropdown-item flex items-center px-4 py-3 transition-colors duration-200"
-                       style="color: var(--text-primary);">
-                        <div class="w-8 h-8 rounded-lg flex items-center justify-center mr-3"
-                             style="background-color: var(--bg-secondary);">
-                            <i class="fas fa-cog text-sm" style="color: var(--text-secondary);"></i>
-                        </div>
-                        <span class="text-sm font-medium">Account Settings</span>
-                    </a>
+
                     <hr class="my-1" style="border-color: var(--border-color);">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf

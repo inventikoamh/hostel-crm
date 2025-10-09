@@ -147,7 +147,7 @@ class TenantPortalController extends Controller
             abort(403, 'Unauthorized access to invoice.');
         }
 
-        $invoice->load(['invoiceItems', 'tenantProfile.bed.room.hostel']);
+        $invoice->load(['invoiceItems', 'tenantProfile.currentBed.room.hostel']);
 
         return view('tenant.invoice-detail', compact('user', 'tenantProfile', 'invoice'));
     }
@@ -186,7 +186,7 @@ class TenantPortalController extends Controller
                 ->with('error', 'Tenant profile not found. Please contact administrator.');
         }
 
-        $tenantProfile->load(['bed.room.hostel', 'user']);
+        $tenantProfile->load(['currentBed.room.hostel', 'user']);
 
         return view('tenant.profile', compact('user', 'tenantProfile'));
     }
@@ -311,7 +311,7 @@ class TenantPortalController extends Controller
                 ->with('error', 'Tenant profile not found. Please contact administrator.');
         }
 
-        $tenantProfile->load(['bed.room.hostel', 'bed.room']);
+        $tenantProfile->load(['currentBed.room.hostel', 'currentBed.room']);
 
         return view('tenant.bed-info', compact('user', 'tenantProfile'));
     }

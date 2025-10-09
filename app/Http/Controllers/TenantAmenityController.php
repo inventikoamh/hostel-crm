@@ -78,8 +78,8 @@ class TenantAmenityController extends Controller
             [
                 'key' => 'status',
                 'label' => 'Status',
-                'width' => 'w-24',
-                'component' => 'components.status-badge'
+                'width' => 'w-32',
+                'component' => 'components.status-update-dropdown'
             ],
             [
                 'key' => 'duration',
@@ -100,7 +100,10 @@ class TenantAmenityController extends Controller
                 'category' => $tenantAmenity->paidAmenity->category_display,
                 'billing_type' => $tenantAmenity->paidAmenity->billing_type_display,
                 'price' => $tenantAmenity->formatted_effective_price,
-                'status' => $tenantAmenity->status,
+                'status' => [
+                    'status' => $tenantAmenity->status,
+                    'tenantAmenityId' => $tenantAmenity->id
+                ],
                 'duration' => $tenantAmenity->duration_text,
                 'view_url' => route('tenant-amenities.show', $tenantAmenity),
                 'edit_url' => route('tenant-amenities.edit', $tenantAmenity),
@@ -239,7 +242,12 @@ class TenantAmenityController extends Controller
      */
     public function show(TenantAmenity $tenantAmenity)
     {
-        $tenantAmenity->load(['tenantProfile.user', 'paidAmenity', 'usageRecords.recordedBy']);
+        $tenantAmenity->load([
+            'tenantProfile.user',
+            'tenantProfile.currentBed.room.hostel',
+            'paidAmenity',
+            'usageRecords.recordedBy'
+        ]);
 
         // Get usage summary for current month
         $currentMonth = Carbon::now();
@@ -253,7 +261,11 @@ class TenantAmenityController extends Controller
      */
     public function edit(TenantAmenity $tenantAmenity)
     {
-        $tenantAmenity->load(['tenantProfile.user', 'paidAmenity']);
+        $tenantAmenity->load([
+            'tenantProfile.user',
+            'tenantProfile.currentBed.room.hostel',
+            'paidAmenity'
+        ]);
 
         return view('tenant-amenities.edit', compact('tenantAmenity'));
     }
@@ -285,6 +297,36 @@ class TenantAmenityController extends Controller
 
         return redirect()->route('tenant-amenities.show', $tenantAmenity)
                         ->with('success', 'Tenant amenity updated successfully!');
+    }
+
+    /**
+     * Update status of tenant amenity (AJAX)
+     */
+    public function updateStatus(Request $request, TenantAmenity $tenantAmenity)
+    {
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|in:active,inactive,suspended,pending'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid status value'
+            ], 400);
+        }
+
+        $oldStatus = $tenantAmenity->status;
+        $tenantAmenity->update(['status' => $request->status]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status updated successfully',
+            'data' => [
+                'id' => $tenantAmenity->id,
+                'status' => $tenantAmenity->status,
+                'old_status' => $oldStatus
+            ]
+        ]);
     }
 
     /**
