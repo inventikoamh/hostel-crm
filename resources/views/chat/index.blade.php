@@ -146,41 +146,125 @@
         const form = document.getElementById('chatForm');
         const input = document.getElementById('chatInput');
         const typing = document.getElementById('typingIndicator');
+        const sendBtn = document.getElementById('sendBtn');
+        
+        let conversationId = 'conv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        let isLoading = false;
+
+        // Get CSRF token
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
         function autoGrow(textarea) {
             textarea.style.height = 'auto';
             textarea.style.height = (textarea.scrollHeight) + 'px';
         }
 
-        function appendMessage(content, role) {
+        function appendMessage(content, role, timestamp = null) {
             const wrapper = document.createElement('div');
             wrapper.className = 'flex items-end mb-4 ' + (role === 'user' ? 'justify-end' : '');
 
             const bubble = document.createElement('div');
             bubble.className = 'message-item rounded-2xl px-4 py-3 shadow-sm ' + (role === 'user' ? 'message-user' : 'message-assistant');
-            bubble.innerHTML = `<div class="text-sm"></div>`;
-            bubble.firstChild.textContent = content;
-
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'text-sm';
+            messageContent.textContent = content;
+            
+            const timeElement = document.createElement('div');
+            timeElement.className = 'text-xs mt-1 ' + (role === 'user' ? 'text-blue-100' : 'text-gray-500');
+            timeElement.textContent = timestamp || new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            
+            bubble.appendChild(messageContent);
+            bubble.appendChild(timeElement);
             wrapper.appendChild(bubble);
             messagesEl.appendChild(wrapper);
             messagesEl.scrollTop = messagesEl.scrollHeight;
         }
 
-        input.addEventListener('input', function () { autoGrow(input); });
+        function showTypingIndicator() {
+            typing.classList.remove('hidden');
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+        }
 
-        form.addEventListener('submit', function () {
+        function hideTypingIndicator() {
+            typing.classList.add('hidden');
+        }
+
+        async function sendMessage(message) {
+            if (isLoading) return;
+            
+            isLoading = true;
+            sendBtn.disabled = true;
+            sendBtn.style.opacity = '0.5';
+            
+            // Add user message
+            appendMessage(message, 'user');
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            try {
+                const response = await fetch('/api/v1/chat/send-message', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        conversation_id: conversationId
+                    })
+                });
+
+                const data = await response.json();
+                
+                // Hide typing indicator
+                hideTypingIndicator();
+                
+                if (data.success) {
+                    // Add AI response
+                    if (data.data.ai_response && data.data.ai_response.message) {
+                        appendMessage(data.data.ai_response.message, 'assistant');
+                    } else {
+                        appendMessage('I received your message but couldn\'t generate a response. Please try again.', 'assistant');
+                    }
+                } else {
+                    appendMessage('Sorry, I encountered an error. Please try again.', 'assistant');
+                    console.error('Chat error:', data);
+                }
+            } catch (error) {
+                hideTypingIndicator();
+                appendMessage('Sorry, I couldn\'t connect to the server. Please check your connection and try again.', 'assistant');
+                console.error('Network error:', error);
+            } finally {
+                isLoading = false;
+                sendBtn.disabled = false;
+                sendBtn.style.opacity = '1';
+                input.focus();
+            }
+        }
+
+        input.addEventListener('input', function () { 
+            autoGrow(input); 
+        });
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
             const text = (input.value || '').trim();
-            if (!text) return;
-            appendMessage(text, 'user');
+            if (!text || isLoading) return;
+            
             input.value = '';
             autoGrow(input);
+            sendMessage(text);
+        });
 
-            // Fake typing and response (no backend yet)
-            typing.classList.remove('hidden');
-            setTimeout(() => {
-                typing.classList.add('hidden');
-                appendMessage('This is a placeholder response. Backend integration pending.', 'assistant');
-            }, 900);
+        // Handle Enter key (but allow Shift+Enter for new lines)
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                form.dispatchEvent(new Event('submit'));
+            }
         });
 
         // Initialize autosize
